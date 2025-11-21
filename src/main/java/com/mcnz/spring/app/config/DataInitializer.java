@@ -76,27 +76,28 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void inicializarLivros() {
+        // titulo, autor, preco, categoria, quantidade
         Object[][] livrosData = {
-                {"Dom Casmurro", "Machado de Assis", 35.90, "Literatura Brasileira"},
-                {"Grande Sertão: Veredas", "Guimarães Rosa", 59.90, "Literatura Brasileira"},
-                {"Capitães da Areia", "Jorge Amado", 42.50, "Literatura Brasileira"},
-                {"1984", "George Orwell", 45.90, "Ficção Científica"},
-                {"Fahrenheit 451", "Ray Bradbury", 38.90, "Ficção Científica"},
-                {"Neuromancer", "William Gibson", 52.90, "Ficção Científica"},
-                {"O Senhor dos Anéis", "J.R.R. Tolkien", 69.90, "Fantasia"},
-                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 39.90, "Fantasia"},
-                {"O Nome do Vento", "Patrick Rothfuss", 54.90, "Fantasia"},
-                {"Orgulho e Preconceito", "Jane Austen", 32.90, "Romance"},
-                {"O Morro dos Ventos Uivantes", "Emily Brontë", 36.50, "Romance"},
-                {"O Código Da Vinci", "Dan Brown", 44.90, "Suspense"},
-                {"Assassinato no Expresso do Oriente", "Agatha Christie", 34.90, "Mistério"},
-                {"Sapiens", "Yuval Noah Harari", 64.90, "Não-Ficção"},
-                {"O Poder do Hábito", "Charles Duhigg", 49.90, "Autoajuda"},
-                {"A Metamorfose", "Franz Kafka", 29.90, "Clássicos"},
-                {"Crime e Castigo", "Fiódor Dostoiévski", 58.90, "Clássicos"},
-                {"Código Limpo", "Robert C. Martin", 89.90, "Tecnologia"},
-                {"Design Patterns", "Erich Gamma", 125.00, "Tecnologia"},
-                {"A Ilha do Tesouro", "Robert Louis Stevenson", 33.90, "Aventura"}
+                {"Dom Casmurro", "Machado de Assis", 35.90, "Literatura Brasileira", 5},
+                {"Grande Sertão: Veredas", "Guimarães Rosa", 59.90, "Literatura Brasileira", 3},
+                {"Capitães da Areia", "Jorge Amado", 42.50, "Literatura Brasileira", 4},
+                {"1984", "George Orwell", 45.90, "Ficção Científica", 6},
+                {"Fahrenheit 451", "Ray Bradbury", 38.90, "Ficção Científica", 2},
+                {"Neuromancer", "William Gibson", 52.90, "Ficção Científica", 2},
+                {"O Senhor dos Anéis", "J.R.R. Tolkien", 69.90, "Fantasia", 4},
+                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 39.90, "Fantasia", 8},
+                {"O Nome do Vento", "Patrick Rothfuss", 54.90, "Fantasia", 3},
+                {"Orgulho e Preconceito", "Jane Austen", 32.90, "Romance", 4},
+                {"O Morro dos Ventos Uivantes", "Emily Brontë", 36.50, "Romance", 2},
+                {"O Código Da Vinci", "Dan Brown", 44.90, "Suspense", 5},
+                {"Assassinato no Expresso do Oriente", "Agatha Christie", 34.90, "Mistério", 3},
+                {"Sapiens", "Yuval Noah Harari", 64.90, "Não-Ficção", 4},
+                {"O Poder do Hábito", "Charles Duhigg", 49.90, "Autoajuda", 3},
+                {"A Metamorfose", "Franz Kafka", 29.90, "Clássicos", 2},
+                {"Crime e Castigo", "Fiódor Dostoiévski", 58.90, "Clássicos", 2},
+                {"Código Limpo", "Robert C. Martin", 89.90, "Tecnologia", 3},
+                {"Design Patterns", "Erich Gamma", 125.00, "Tecnologia", 1},
+                {"A Ilha do Tesouro", "Robert Louis Stevenson", 33.90, "Aventura", 0} // Sem estoque para teste
         };
 
         for (Object[] l : livrosData) {
@@ -105,7 +106,10 @@ public class DataInitializer implements CommandLineRunner {
             livro.setAutor((String) l[1]);
             livro.setPreco((Double) l[2]);
             livro.setCategoria((String) l[3]);
-            livro.setDisponivel(true);
+            int qtd = (Integer) l[4];
+            livro.setQuantidade(qtd);
+            livro.setQuantidadeDisponivel(qtd);
+            livro.setDisponivel(qtd > 0);
             repositorioLivro.save(livro);
         }
 

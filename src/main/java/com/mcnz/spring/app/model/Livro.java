@@ -37,6 +37,12 @@ public class Livro {
     @Column(nullable = false)
     private boolean disponivel = true;
 
+    @Column(nullable = false)
+    private int quantidade = 1;
+
+    @Column(name = "quantidade_disponivel", nullable = false)
+    private int quantidadeDisponivel = 1;
+
     public Livro() {}
 
     public Livro(String titulo, String autor, double preco) {
@@ -75,4 +81,12 @@ public class Livro {
 
     public boolean isDisponivel() { return disponivel; }
     public void setDisponivel(boolean disponivel) { this.disponivel = disponivel; }
+
+    public int getQuantidade() { return quantidade; }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
+
+    public int getQuantidadeDisponivel() { return quantidadeDisponivel; }
+    public void setQuantidadeDisponivel(int quantidadeDisponivel) { this.quantidadeDisponivel = quantidadeDisponivel; }
+
+    public boolean podeReservar() { return quantidadeDisponivel > 0; }
 }

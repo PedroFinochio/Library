@@ -6,20 +6,17 @@
     <title>Home - Usuário</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
         }
-
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
         .navbar-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -30,7 +27,6 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-
         .navbar-brand {
             display: flex;
             align-items: center;
@@ -38,13 +34,11 @@
             font-size: 1.5em;
             font-weight: bold;
         }
-
         .navbar-user {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-
         .user-info {
             display: flex;
             align-items: center;
@@ -53,7 +47,6 @@
             padding: 8px 15px;
             border-radius: 20px;
         }
-
         .btn-logout {
             background: rgba(255,255,255,0.2);
             color: white;
@@ -62,19 +55,17 @@
             border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
-
         .btn-logout:hover {
             background: white;
             color: #667eea;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
-
         .welcome-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -84,31 +75,26 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
             text-align: center;
         }
-
         .welcome-section h1 {
             font-size: 2.5em;
             margin-bottom: 15px;
         }
-
         .menu-section {
             background: white;
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
-
         .menu-section h2 {
             color: #333;
             font-size: 2em;
             margin-bottom: 30px;
         }
-
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
         }
-
         .menu-card {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             padding: 30px;
@@ -121,29 +107,33 @@
             display: block;
             border: 2px solid transparent;
         }
-
         .menu-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.12);
             border-color: #667eea;
         }
-
         .menu-card .card-icon {
             font-size: 3.5em;
             margin-bottom: 15px;
+            display: block;
         }
-
         .menu-card h3 {
             color: #333;
             font-size: 1.4em;
             margin-bottom: 10px;
         }
-
         .menu-card p {
             color: #666;
             font-size: 0.95em;
         }
-
+        .menu-card.highlight {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        .menu-card.highlight h3,
+        .menu-card.highlight p {
+            color: white;
+        }
         .info-box {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -152,12 +142,10 @@
             margin-top: 30px;
             text-align: center;
         }
-
         .info-box h3 {
             font-size: 1.5em;
             margin-bottom: 15px;
         }
-
         @media (max-width: 768px) {
             .navbar-content { flex-direction: column; }
             .welcome-section { padding: 40px 20px; }
@@ -188,7 +176,7 @@
 <div class="container">
     <div class="welcome-section">
         <h1>📖 Bem-vindo à Biblioteca!</h1>
-        <p>Explore e favorite seus livros preferidos</p>
+        <p>Explore, reserve e favorite seus livros preferidos</p>
     </div>
 
     <div class="menu-section">
@@ -200,10 +188,16 @@
                 <p>Navegue por todos os livros disponíveis e descubra novos títulos.</p>
             </a>
 
-            <a th:href="@{/user/biblioteca}" class="menu-card">
-                <span class="card-icon">🔍</span>
-                <h3>Buscar Livros</h3>
-                <p>Encontre livros por título, autor ou palavra-chave.</p>
+            <a th:href="@{/user/reservas}" class="menu-card highlight">
+                <span class="card-icon">📖</span>
+                <h3>Reservar Livros</h3>
+                <p>Faça um pedido de reserva e retire o livro na biblioteca.</p>
+            </a>
+
+            <a th:href="@{/user/minhas-reservas}" class="menu-card">
+                <span class="card-icon">📋</span>
+                <h3>Minhas Reservas</h3>
+                <p>Acompanhe o status das suas solicitações de reserva.</p>
             </a>
 
             <a th:href="@{/user/favoritos}" class="menu-card">
@@ -211,17 +205,11 @@
                 <h3>Meus Favoritos</h3>
                 <p>Acesse rapidamente seus livros favoritos.</p>
             </a>
-
-            <a th:href="@{/swagger-ui/index.html}" class="menu-card">
-                <span class="card-icon">📖</span>
-                <h3>API REST</h3>
-                <p>Documentação da API para desenvolvedores.</p>
-            </a>
         </div>
 
         <div class="info-box">
-            <h3>ℹ️ Informação</h3>
-            <p>Como usuário, você pode explorar a biblioteca, buscar livros e favoritá-los. Para adicionar, editar ou remover livros, entre em contato com um administrador.</p>
+            <h3>ℹ️ Como funciona a reserva?</h3>
+            <p>1. Busque o livro desejado → 2. Solicite a reserva → 3. Aguarde aprovação do bibliotecário → 4. Retire na biblioteca</p>
         </div>
     </div>
 </div>

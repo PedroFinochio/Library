@@ -41,14 +41,17 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        // Rotas para ADMIN e BIBLIOTECARIO - CORRIGIDO
+                        // Rotas exclusivas para ADMIN
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "BIBLIOTECARIO")
+                        // Rotas para usuários comuns
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "BIBLIOTECARIO")
+                        // Rotas de biblioteca para ADMIN e BIBLIOTECARIO
                         .requestMatchers(
-                                "/admin/**",
                                 "/biblioteca/novo",
-                                "/biblioteca/salver",
+                                "/biblioteca/salvar",
                                 "/biblioteca/editar/**",
                                 "/biblioteca/deletar/**"
-                        ).hasAnyRole("ADMIN", "BIBLIOTECARIO") // ← CORREÇÃO AQUI
+                        ).hasAnyRole("ADMIN", "BIBLIOTECARIO")
                         // Todas as outras rotas autenticadas
                         .anyRequest().authenticated()
                 )
