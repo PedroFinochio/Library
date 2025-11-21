@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Reservas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; min-height: 100vh; }
+        .navbar {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white; padding: 1rem 0;
+        }
+        .navbar-content {
+            max-width: 1400px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+        }
+        .navbar-brand { display: flex; align-items: center; gap: 10px; font-size: 1.5em; font-weight: bold; text-decoration: none; color: white; }
+        .navbar-actions { display: flex; gap: 15px; flex-wrap: wrap; }
+        .btn { padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer; }
+        .btn-primary { background: white; color: #2c3e50; }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .page-header h1 { color: #333; font-size: 2em; }
+        .badge-pendentes { background: #ffc107; color: #333; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
+        .filter-btn { padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: 2px solid #ddd; background: white; color: #666; }
+        .filter-btn:hover, .filter-btn.active { background: #2c3e50; color: white; border-color: #2c3e50; }
+        .alert { padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; }
+        .alert-success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .alert-error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .reservas-table { width: 100%; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .reservas-table table { width: 100%; border-collapse: collapse; }
+        .reservas-table th { background: #2c3e50; color: white; padding: 15px; text-align: left; font-weight: 600; }
+        .reservas-table td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .reservas-table tr:hover { background: #f8f9fa; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 35px; height: 35px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .livro-info h4 { margin-bottom: 3px; color: #333; }
+        .livro-info p { font-size: 0.85em; color: #666; }
+        .status-badge { padding: 5px 12px; border-radius: 15px; font-weight: 600; font-size: 0.8em; text-transform: uppercase; }
+        .status-pendente { background: #fff3cd; color: #856404; }
+        .status-aprovada { background: #d4edda; color: #155724; }
+        .status-rejeitada { background: #f8d7da; color: #721c24; }
+        .status-devolvida { background: #d1ecf1; color: #0c5460; }
+        .status-cancelada { background: #e9ecef; color: #6c757d; }
+        .actions-cell { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-sm { padding: 6px 12px; border-radius: 6px; font-size: 0.85em; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-info:hover { background: #138496; }
+        .empty-state { text-align: center; padding: 60px; background: white; border-radius: 15px; }
+        .empty-state-icon { font-size: 4em; margin-bottom: 15px; }
+        .date-info { font-size: 0.85em; color: #666; }
+        @media (max-width: 1024px) {
+            .reservas-table { overflow-x: auto; }
+            .reservas-table table { min-width: 900px; }
+        }
+        @media (max-width: 768px) {
+            .navbar-content { flex-direction: column; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-content">
+        <a th:href="@{/admin/dashboard}" class="navbar-brand">
+            <span>📚</span>
+            <span>Painel Admin</span>
+        </a>
+        <div class="navbar-actions">
+            <a th:href="@{/admin/biblioteca}" class="btn btn-primary">📖 Biblioteca</a>
+            <a th:href="@{/admin/dashboard}" class="btn btn-primary">🏠 Dashboard</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+    <div class="page-header">
+        <div>
+            <h1>📋 Gerenciar Reservas</h1>
+            <span class="badge-pendentes" th:text="${totalPendentes + ' pendente(s)'}">0 pendentes</span>
+        </div>
+    </div>
+
+    <div class="filters">
+        <a th:href="@{/admin/reservas}" th:class="${statusFiltro == null ? 'filter-btn active' : 'filter-btn'}">Todas</a>
+        <a th:href="@{/admin/reservas(status='PENDENTE')}" th:class="${statusFiltro == 'PENDENTE' ? 'filter-btn active' : 'filter-btn'}">⏳ Pendentes</a>
+        <a th:href="@{/admin/reservas(status='APROVADA')}" th:class="${statusFiltro == 'APROVADA' ? 'filter-btn active' : 'filter-btn'}">✅ Aprovadas</a>
+        <a th:href="@{/admin/reservas(status='DEVOLVIDA')}" th:class="${statusFiltro == 'DEVOLVIDA' ? 'filter-btn active' : 'filter-btn'}">📦 Devolvidas</a>
+        <a th:href="@{/admin/reservas(status='REJEITADA')}" th:class="${statusFiltro == 'REJEITADA' ? 'filter-btn active' : 'filter-btn'}">❌ Rejeitadas</a>
+        <a th:href="@{/admin/reservas(status='CANCELADA')}" th:class="${statusFiltro == 'CANCELADA' ? 'filter-btn active' : 'filter-btn'}">🚫 Canceladas</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(reservas)}" class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h2>Nenhuma reserva encontrada</h2>
+        <p>Não há reservas com este filtro</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(reservas)}" class="reservas-table">
+        <table>
+            <thead>
+            <tr>
+                <th>Usuário</th>
+                <th>Livro</th>
+                <th>Data Solicitação</th>
+                <th>Devolução Prevista</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reserva : ${reservas}">
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar" th:text="${reserva.usuario.username.substring(0,1).toUpperCase()}">U</div>
+                        <div>
+                            <strong th:text="${reserva.usuario.username}">username</strong>
+                            <div style="font-size: 0.8em; color: #666;" th:text="${reserva.usuario.email}">email</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="livro-info">
+                        <h4 th:text="${reserva.livro.titulo}">Título</h4>
+                        <p th:text="${reserva.livro.autor}">Autor</p>
+                    </div>
+                </td>
+                <td>
+                    <div class="date-info" th:text="${#temporals.format(reserva.dataReserva, 'dd/MM/yyyy HH:mm')}">Data</div>
+                </td>
+                <td>
+                    <div class="date-info" th:if="${reserva.dataDevolucaoPrevista != null}"
+                         th:text="${#temporals.format(reserva.dataDevolucaoPrevista, 'dd/MM/yyyy')}">Data</div>
+                    <span th:unless="${reserva.dataDevolucaoPrevista != null}">-</span>
+                </td>
+                <td>
+                    <span th:class="${'status-badge status-' + reserva.status.toLowerCase()}" th:text="${reserva.status}">STATUS</span>
+                </td>
+                <td>
+                    <div class="actions-cell">
+                        <!-- Ações para PENDENTE -->
+                        <th:block th:if="${reserva.status == 'PENDENTE'}">
+                            <form th:action="@{/admin/reservas/aprovar/{id}(id=${reserva.id})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn-sm btn-success" onclick="return confirm('Aprovar esta reserva?')">✅ Aprovar</button>
+                            </form>
+                            <form th:action="@{/admin/reservas/rejeitar/{id}(id=${reserva.id})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn-sm btn-danger" onclick="return confirm('Rejeitar esta reserva?')">❌ Rejeitar</button>
+                            </form>
+                        </th:block>
+                        <!-- Ações para APROVADA -->
+                        <th:block th:if="${reserva.status == 'APROVADA'}">
+                            <form th:action="@{/admin/reservas/devolver/{id}(id=${reserva.id})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn-sm btn-info" onclick="return confirm('Registrar devolução?')">📦 Devolver</button>
+                            </form>
+                        </th:block>
+                        <!-- Sem ações para outros status -->
+                        <span th:if="${reserva.status != 'PENDENTE' and reserva.status != 'APROVADA'}" style="color: #999; font-size: 0.85em;">-</span>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
