@@ -17,76 +17,114 @@ public class Livro {
     private String autor;
 
     @Column(nullable = false)
-    private double preco;
+    private Double preco;
 
-    @Column(name = "image_url", length = 500)
+    @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(length = 20)
-    private String isbn;
-
-    @Column(length = 100)
-    private String editora;
-
-    @Column(name = "ano_publicacao")
-    private Integer anoPublicacao;
-
-    @Column(length = 50)
-    private String categoria;
-
+    // Quantidade total no acervo
     @Column(nullable = false)
-    private boolean disponivel = true;
+    private Integer quantidade = 0;
 
-    @Column(nullable = false)
-    private int quantidade = 1;
-
+    // Quantidade disponível para empréstimo
     @Column(name = "quantidade_disponivel", nullable = false)
-    private int quantidadeDisponivel = 1;
+    private Integer quantidadeDisponivel = 0;
+
+    // Status de disponibilidade
+    @Column(nullable = false)
+    private Boolean disponivel = true;
 
     public Livro() {}
 
-    public Livro(String titulo, String autor, double preco) {
+    public Livro(String titulo, String autor, Double preco) {
         this.titulo = titulo;
         this.autor = autor;
         this.preco = preco;
+        this.quantidade = 1;
+        this.quantidadeDisponivel = 1;
+        this.disponivel = true;
     }
 
     // Getters e Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getAutor() { return autor; }
-    public void setAutor(String autor) { this.autor = autor; }
+    public String getTitulo() {
+        return titulo;
+    }
 
-    public double getPreco() { return preco; }
-    public void setPreco(double preco) { this.preco = preco; }
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getAutor() {
+        return autor;
+    }
 
-    public String getIsbn() { return isbn; }
-    public void setIsbn(String isbn) { this.isbn = isbn; }
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
 
-    public String getEditora() { return editora; }
-    public void setEditora(String editora) { this.editora = editora; }
+    public Double getPreco() {
+        return preco;
+    }
 
-    public Integer getAnoPublicacao() { return anoPublicacao; }
-    public void setAnoPublicacao(Integer anoPublicacao) { this.anoPublicacao = anoPublicacao; }
+    public void setPreco(Double preco) {
+        this.preco = preco;
+    }
 
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-    public boolean isDisponivel() { return disponivel; }
-    public void setDisponivel(boolean disponivel) { this.disponivel = disponivel; }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-    public int getQuantidade() { return quantidade; }
-    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
+    public Integer getQuantidade() {
+        return quantidade;
+    }
 
-    public int getQuantidadeDisponivel() { return quantidadeDisponivel; }
-    public void setQuantidadeDisponivel(int quantidadeDisponivel) { this.quantidadeDisponivel = quantidadeDisponivel; }
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
 
-    public boolean podeReservar() { return quantidadeDisponivel > 0; }
+    public Integer getQuantidadeDisponivel() {
+        return quantidadeDisponivel;
+    }
+
+    public void setQuantidadeDisponivel(Integer quantidadeDisponivel) {
+        this.quantidadeDisponivel = quantidadeDisponivel;
+    }
+
+    public Boolean getDisponivel() {
+        return disponivel;
+    }
+
+    public void setDisponivel(Boolean disponivel) {
+        this.disponivel = disponivel;
+    }
+
+    // Método auxiliar para verificar se há estoque
+    public boolean temEstoque() {
+        return quantidadeDisponivel != null && quantidadeDisponivel > 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Livro{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", preco=" + preco +
+                ", quantidade=" + quantidade +
+                ", quantidadeDisponivel=" + quantidadeDisponivel +
+                ", disponivel=" + disponivel +
+                '}';
+    }
 }

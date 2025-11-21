@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/admin-tools/**"  // Ferramentas de admin (REMOVER EM PRODUÇÃO!)
                         ).permitAll()
                         // Rotas exclusivas para ADMIN
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "BIBLIOTECARIO")
@@ -66,7 +67,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/livros/**")
+                        .ignoringRequestMatchers("/livros/**", "/admin-tools/**")
                 )
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/acesso-negado")
