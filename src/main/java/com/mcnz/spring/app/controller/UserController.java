@@ -6,6 +6,7 @@ import com.mcnz.spring.app.model.Usuario;
 import com.mcnz.spring.app.repository.RepositorioLivro;
 import com.mcnz.spring.app.repository.RepositorioReserva;
 import com.mcnz.spring.app.repository.RepositorioUsuario;
+import com.mcnz.spring.app.service.FavoritoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +31,9 @@ public class UserController {
     @Autowired
     private RepositorioReserva repositorioReserva;
 
+    @Autowired
+    private FavoritoService favoritoService;
+
     // Home do usuário
     @GetMapping("/home")
     public String home(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -53,8 +57,11 @@ public class UserController {
             livros = repositorioLivro.findAll();
         }
 
-        // IDs dos livros favoritados pelo usuário (se você tiver essa funcionalidade)
-        List<Integer> favoritosIds = List.of(); // Implementar se necessário
+        // IDs dos livros favoritados pelo usuário
+        List<Integer> favoritosIds = favoritoService.getFavoritosPorUsuario(usuario.getId())
+                .stream()
+                .map(Long::intValue)
+                .collect(Collectors.toList());
 
         model.addAttribute("livros", livros);
         model.addAttribute("usuario", usuario);
@@ -162,12 +169,53 @@ public class UserController {
         return "redirect:/user/minhas-reservas";
     }
 
-    // Favoritos (mantendo funcionalidade existente)
+    // ==================== FAVORITOS ====================
+
+    // Página de favoritos
     @GetMapping("/favoritos")
     public String favoritos(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         Usuario usuario = repositorioUsuario.findByUsername(userDetails.getUsername()).orElse(null);
+        List<Livro> livros = favoritoService.getLivrosFavoritos(usuario.getId());
+
         model.addAttribute("usuario", usuario);
-        // Implementar lógica de favoritos se necessário
+        model.addAttribute("livros", livros);
+
         return "user-favoritos";
+    }
+
+    // Adicionar aos favoritos
+    @PostMapping("/favoritos/adicionar/{livroId}")
+    public String adicionarFavorito(@PathVariable int livroId,
+                                    @AuthenticationPrincipal UserDetails userDetails,
+                                    RedirectAttributes redirectAttributes) {
+        Usuario usuario = repositorioUsuario.findByUsername(userDetails.getUsername()).orElse(null);
+
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("erro", "Usuário não encontrado.");
+            return "redirect:/user/biblioteca";
+        }
+
+        favoritoService.adicionarFavorito(usuario.getId(), livroId);
+        redirectAttributes.addFlashAttribute("sucesso", "Livro adicionado aos favoritos!");
+
+        return "redirect:/user/biblioteca";
+    }
+
+    // Remover dos favoritos
+    @PostMapping("/favoritos/remover/{livroId}")
+    public String removerFavorito(@PathVariable int livroId,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  RedirectAttributes redirectAttributes) {
+        Usuario usuario = repositorioUsuario.findByUsername(userDetails.getUsername()).orElse(null);
+
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("erro", "Usuário não encontrado.");
+            return "redirect:/user/favoritos";
+        }
+
+        favoritoService.removerFavorito(usuario.getId(), livroId);
+        redirectAttributes.addFlashAttribute("sucesso", "Livro removido dos favoritos.");
+
+        return "redirect:/user/favoritos";
     }
 }

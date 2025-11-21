@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Usuário</title>
+    <title>Home - Biblioteca Digital</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -38,6 +38,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
         .user-info {
             display: flex;
@@ -46,6 +47,16 @@
             background: rgba(255,255,255,0.2);
             padding: 8px 15px;
             border-radius: 20px;
+        }
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
         }
         .btn-logout {
             background: rgba(255,255,255,0.2);
@@ -79,24 +90,17 @@
             font-size: 2.5em;
             margin-bottom: 15px;
         }
-        .menu-section {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-        .menu-section h2 {
-            color: #333;
-            font-size: 2em;
-            margin-bottom: 30px;
+        .welcome-section p {
+            font-size: 1.3em;
         }
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
+            margin-bottom: 40px;
         }
         .menu-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: white;
             padding: 30px;
             border-radius: 15px;
             text-align: center;
@@ -105,17 +109,15 @@
             text-decoration: none;
             color: inherit;
             display: block;
-            border: 2px solid transparent;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
         .menu-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-            border-color: #667eea;
         }
         .menu-card .card-icon {
             font-size: 3.5em;
             margin-bottom: 15px;
-            display: block;
         }
         .menu-card h3 {
             color: #333;
@@ -126,25 +128,35 @@
             color: #666;
             font-size: 0.95em;
         }
-        .menu-card.highlight {
+        .quick-actions {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-        }
-        .menu-card.highlight h3,
-        .menu-card.highlight p {
-            color: white;
-        }
-        .info-box {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
             padding: 30px;
             border-radius: 15px;
-            margin-top: 30px;
+            color: white;
             text-align: center;
         }
-        .info-box h3 {
+        .quick-actions h3 {
             font-size: 1.5em;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-action {
+            background: white;
+            color: #11998e;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
         }
         @media (max-width: 768px) {
             .navbar-content { flex-direction: column; }
@@ -163,7 +175,7 @@
         </div>
         <div class="navbar-user">
             <div class="user-info">
-                <span>👤</span>
+                <div class="user-avatar">👤</div>
                 <span th:text="${usuario.username}">Usuário</span>
             </div>
             <form th:action="@{/logout}" method="post" style="display: inline;">
@@ -175,41 +187,42 @@
 
 <div class="container">
     <div class="welcome-section">
-        <h1>📖 Bem-vindo à Biblioteca!</h1>
-        <p>Explore, reserve e favorite seus livros preferidos</p>
+        <h1>📖 Bem-vindo de volta!</h1>
+        <p>Explore a biblioteca e descubra novos livros</p>
     </div>
 
-    <div class="menu-section">
-        <h2>🎯 Menu Principal</h2>
-        <div class="menu-grid">
-            <a th:href="@{/user/biblioteca}" class="menu-card">
-                <span class="card-icon">📚</span>
-                <h3>Explorar Biblioteca</h3>
-                <p>Navegue por todos os livros disponíveis e descubra novos títulos.</p>
-            </a>
+    <div class="menu-grid">
+        <a th:href="@{/user/biblioteca}" class="menu-card">
+            <span class="card-icon">📚</span>
+            <h3>Explorar Biblioteca</h3>
+            <p>Navegue por todos os livros disponíveis no acervo.</p>
+        </a>
 
-            <a th:href="@{/user/reservas}" class="menu-card highlight">
-                <span class="card-icon">📖</span>
-                <h3>Reservar Livros</h3>
-                <p>Faça um pedido de reserva e retire o livro na biblioteca.</p>
-            </a>
+        <a th:href="@{/user/reservas}" class="menu-card">
+            <span class="card-icon">📖</span>
+            <h3>Reservar Livros</h3>
+            <p>Solicite a reserva de livros para empréstimo.</p>
+        </a>
 
-            <a th:href="@{/user/minhas-reservas}" class="menu-card">
-                <span class="card-icon">📋</span>
-                <h3>Minhas Reservas</h3>
-                <p>Acompanhe o status das suas solicitações de reserva.</p>
-            </a>
+        <a th:href="@{/user/minhas-reservas}" class="menu-card">
+            <span class="card-icon">📋</span>
+            <h3>Minhas Reservas</h3>
+            <p>Acompanhe o status das suas reservas.</p>
+        </a>
 
-            <a th:href="@{/user/favoritos}" class="menu-card">
-                <span class="card-icon">⭐</span>
-                <h3>Meus Favoritos</h3>
-                <p>Acesse rapidamente seus livros favoritos.</p>
-            </a>
-        </div>
+        <a th:href="@{/user/favoritos}" class="menu-card">
+            <span class="card-icon">⭐</span>
+            <h3>Meus Favoritos</h3>
+            <p>Acesse seus livros favoritos rapidamente.</p>
+        </a>
+    </div>
 
-        <div class="info-box">
-            <h3>ℹ️ Como funciona a reserva?</h3>
-            <p>1. Busque o livro desejado → 2. Solicite a reserva → 3. Aguarde aprovação do bibliotecário → 4. Retire na biblioteca</p>
+    <div class="quick-actions">
+        <h3>🚀 Ações Rápidas</h3>
+        <div class="action-buttons">
+            <a th:href="@{/user/reservas}" class="btn-action">📖 Reservar Livro</a>
+            <a th:href="@{/user/biblioteca}" class="btn-action">📚 Ver Biblioteca</a>
+            <a th:href="@{/user/favoritos}" class="btn-action">⭐ Ver Favoritos</a>
         </div>
     </div>
 </div>

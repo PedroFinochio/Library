@@ -76,28 +76,38 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void inicializarLivros() {
-        // titulo, autor, preco, categoria, quantidade
+        // titulo, autor, preco, quantidadeTotal, quantidadeDisponivel
         Object[][] livrosData = {
-                {"Dom Casmurro", "Machado de Assis", 35.90, "Literatura Brasileira", 5},
-                {"Grande Sertão: Veredas", "Guimarães Rosa", 59.90, "Literatura Brasileira", 3},
-                {"Capitães da Areia", "Jorge Amado", 42.50, "Literatura Brasileira", 4},
-                {"1984", "George Orwell", 45.90, "Ficção Científica", 6},
-                {"Fahrenheit 451", "Ray Bradbury", 38.90, "Ficção Científica", 2},
-                {"Neuromancer", "William Gibson", 52.90, "Ficção Científica", 2},
-                {"O Senhor dos Anéis", "J.R.R. Tolkien", 69.90, "Fantasia", 4},
-                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 39.90, "Fantasia", 8},
-                {"O Nome do Vento", "Patrick Rothfuss", 54.90, "Fantasia", 3},
-                {"Orgulho e Preconceito", "Jane Austen", 32.90, "Romance", 4},
-                {"O Morro dos Ventos Uivantes", "Emily Brontë", 36.50, "Romance", 2},
-                {"O Código Da Vinci", "Dan Brown", 44.90, "Suspense", 5},
-                {"Assassinato no Expresso do Oriente", "Agatha Christie", 34.90, "Mistério", 3},
-                {"Sapiens", "Yuval Noah Harari", 64.90, "Não-Ficção", 4},
-                {"O Poder do Hábito", "Charles Duhigg", 49.90, "Autoajuda", 3},
-                {"A Metamorfose", "Franz Kafka", 29.90, "Clássicos", 2},
-                {"Crime e Castigo", "Fiódor Dostoiévski", 58.90, "Clássicos", 2},
-                {"Código Limpo", "Robert C. Martin", 89.90, "Tecnologia", 3},
-                {"Design Patterns", "Erich Gamma", 125.00, "Tecnologia", 1},
-                {"A Ilha do Tesouro", "Robert Louis Stevenson", 33.90, "Aventura", 0} // Sem estoque para teste
+                // Livros com boa disponibilidade
+                {"Dom Casmurro", "Machado de Assis", 35.90, 5, 4},
+                {"1984", "George Orwell", 45.90, 6, 5},
+                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 39.90, 8, 7},
+                {"O Código Da Vinci", "Dan Brown", 44.90, 5, 4},
+                {"Sapiens", "Yuval Noah Harari", 64.90, 4, 3},
+                {"Orgulho e Preconceito", "Jane Austen", 32.90, 4, 3},
+
+                // Livros com disponibilidade média
+                {"Grande Sertão: Veredas", "Guimarães Rosa", 59.90, 3, 2},
+                {"Capitães da Areia", "Jorge Amado", 42.50, 4, 2},
+                {"O Senhor dos Anéis", "J.R.R. Tolkien", 69.90, 4, 2},
+                {"O Nome do Vento", "Patrick Rothfuss", 54.90, 3, 2},
+                {"Assassinato no Expresso do Oriente", "Agatha Christie", 34.90, 3, 2},
+                {"O Poder do Hábito", "Charles Duhigg", 49.90, 3, 1},
+                {"Código Limpo", "Robert C. Martin", 89.90, 3, 1},
+
+                // Livros com baixa disponibilidade (última unidade)
+                {"Fahrenheit 451", "Ray Bradbury", 38.90, 2, 1},
+                {"Neuromancer", "William Gibson", 52.90, 2, 1},
+                {"O Morro dos Ventos Uivantes", "Emily Brontë", 36.50, 2, 1},
+                {"A Metamorfose", "Franz Kafka", 29.90, 2, 1},
+                {"Crime e Castigo", "Fiódor Dostoiévski", 58.90, 2, 1},
+
+                // Livros indisponíveis (todos emprestados)
+                {"A Ilha do Tesouro", "Robert Louis Stevenson", 33.90, 3, 0},
+                {"Design Patterns", "Erich Gamma", 125.00, 2, 0},
+                {"O Hobbit", "J.R.R. Tolkien", 42.90, 3, 0},
+                {"Cem Anos de Solidão", "Gabriel García Márquez", 49.90, 2, 0},
+                {"A Revolução dos Bichos", "George Orwell", 34.90, 2, 0}
         };
 
         for (Object[] l : livrosData) {
@@ -105,14 +115,24 @@ public class DataInitializer implements CommandLineRunner {
             livro.setTitulo((String) l[0]);
             livro.setAutor((String) l[1]);
             livro.setPreco((Double) l[2]);
-            livro.setCategoria((String) l[3]);
-            int qtd = (Integer) l[4];
-            livro.setQuantidade(qtd);
-            livro.setQuantidadeDisponivel(qtd);
-            livro.setDisponivel(qtd > 0);
+            int qtdTotal = (Integer) l[3];
+            int qtdDisponivel = (Integer) l[4];
+
+            livro.setQuantidade(qtdTotal);
+            livro.setQuantidadeDisponivel(qtdDisponivel);
+            livro.setDisponivel(qtdDisponivel > 0);
+
             repositorioLivro.save(livro);
+
+            // Log para debug
+            System.out.println(String.format("Livro: %s - Total: %d, Disponível: %d, Status: %s",
+                    livro.getTitulo(), qtdTotal, qtdDisponivel, (qtdDisponivel > 0 ? "Disponível" : "Indisponível")));
         }
 
         System.out.println("Livros criados: " + repositorioLivro.count());
+        System.out.println("Livros disponíveis para reserva: " +
+                repositorioLivro.findAll().stream().filter(l -> l.getQuantidadeDisponivel() > 0).count());
+        System.out.println("Livros indisponíveis: " +
+                repositorioLivro.findAll().stream().filter(l -> l.getQuantidadeDisponivel() == 0).count());
     }
 }

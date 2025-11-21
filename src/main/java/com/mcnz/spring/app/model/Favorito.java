@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "favoritos")
+@Table(name = "favoritos", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"usuario_id", "livro_id"})
+})
 public class Favorito {
 
     @Id
@@ -17,19 +19,15 @@ public class Favorito {
     @Column(name = "livro_id", nullable = false)
     private Integer livroId;
 
-    @Column(name = "data_favoritado")
-    private LocalDateTime dataFavoritado;
+    @Column(name = "data_adicao", nullable = false)
+    private LocalDateTime dataAdicao = LocalDateTime.now();
 
-    // Construtor padrão
-    public Favorito() {
-        this.dataFavoritado = LocalDateTime.now();
-    }
+    public Favorito() {}
 
-    // Construtor com parâmetros
     public Favorito(Long usuarioId, Integer livroId) {
         this.usuarioId = usuarioId;
         this.livroId = livroId;
-        this.dataFavoritado = LocalDateTime.now();
+        this.dataAdicao = LocalDateTime.now();
     }
 
     // Getters e Setters
@@ -57,21 +55,11 @@ public class Favorito {
         this.livroId = livroId;
     }
 
-    public LocalDateTime getDataFavoritado() {
-        return dataFavoritado;
+    public LocalDateTime getDataAdicao() {
+        return dataAdicao;
     }
 
-    public void setDataFavoritado(LocalDateTime dataFavoritado) {
-        this.dataFavoritado = dataFavoritado;
-    }
-
-    @Override
-    public String toString() {
-        return "Favorito{" +
-                "id=" + id +
-                ", usuarioId=" + usuarioId +
-                ", livroId=" + livroId +
-                ", dataFavoritado=" + dataFavoritado +
-                '}';
+    public void setDataAdicao(LocalDateTime dataAdicao) {
+        this.dataAdicao = dataAdicao;
     }
 }
