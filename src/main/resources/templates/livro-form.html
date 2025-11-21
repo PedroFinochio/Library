@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${livro.id == 0 ? 'Adicionar Livro' : 'Editar Livro'}">Formulário de Livro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header .icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .form-header h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .helper-text {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-header h1 {
+                font-size: 1.6em;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="form-header">
+        <div class="icon">📚</div>
+        <h1 th:text="${livro.id == 0 ? 'Adicionar Novo Livro' : 'Editar Livro'}">Formulário de Livro</h1>
+        <p th:text="${livro.id == 0 ? 'Preencha os dados do novo livro' : 'Atualize as informações do livro'}">Descrição</p>
+    </div>
+
+    <form th:action="@{/biblioteca/salvar}" th:object="${livro}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="titulo">Título *</label>
+            <input type="text" id="titulo" th:field="*{titulo}" required placeholder="Ex: Dom Casmurro" />
+        </div>
+
+        <div class="form-group">
+            <label for="autor">Autor *</label>
+            <input type="text" id="autor" th:field="*{autor}" required placeholder="Ex: Machado de Assis" />
+        </div>
+
+        <div class="form-group">
+            <label for="preco">Preço (R$) *</label>
+            <input type="number" id="preco" th:field="*{preco}" step="0.01" min="0" required placeholder="Ex: 29.90" />
+            <div class="helper-text">Use ponto (.) para separar decimais</div>
+        </div>
+
+        <div class="form-group">
+            <label for="imageUrl">URL da Imagem (opcional)</label>
+            <input type="url" id="imageUrl" th:field="*{imageUrl}" placeholder="Ex: https://exemplo.com/capa.jpg" />
+            <div class="helper-text">Deixe em branco para usar ícone padrão</div>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/biblioteca}" class="btn btn-secondary">❌ Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                <span th:text="${livro.id == 0 ? '✓ Adicionar' : '✓ Salvar'}">Salvar</span>
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
