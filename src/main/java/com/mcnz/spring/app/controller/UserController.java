@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,7 +99,7 @@ public class UserController {
         return "user-reservas";
     }
 
-    // Fazer pedido de reserva
+    // Solicitar reserva - APROVAÇÃO AUTOMÁTICA
     @PostMapping("/reservas/solicitar/{livroId}")
     public String solicitarReserva(@PathVariable int livroId,
                                    @AuthenticationPrincipal UserDetails userDetails,
@@ -111,24 +112,40 @@ public class UserController {
             return "redirect:/user/reservas";
         }
 
-        // Verifica se já tem reserva ativa para este livro
+        // Verificar se já existe reserva ativa
         if (repositorioReserva.existsReservaAtivaByUsuarioAndLivro(usuario, livro)) {
-            redirectAttributes.addFlashAttribute("erro", "Você já possui uma reserva ativa para este livro.");
+            redirectAttributes.addFlashAttribute("erro",
+                    "Você já possui uma reserva ativa para este livro!");
             return "redirect:/user/reservas";
         }
 
-        // Verifica disponibilidade
+        // Verificar disponibilidade
         if (livro.getQuantidadeDisponivel() <= 0) {
-            redirectAttributes.addFlashAttribute("erro", "Este livro não está disponível para reserva no momento.");
+            redirectAttributes.addFlashAttribute("erro",
+                    "Este livro não está disponível no momento.");
             return "redirect:/user/reservas";
         }
 
-        // Cria a reserva
+        // Criar reserva
         Reserva reserva = new Reserva(usuario, livro);
+
+        // APROVAÇÃO AUTOMÁTICA - Como há disponibilidade, aprovar imediatamente
+        reserva.setStatus("APROVADA");
+        reserva.setObservacao("Reserva aprovada automaticamente");
+        reserva.setDataDevolucaoPrevista(LocalDateTime.now().plusDays(14));
+
+        // Decrementar quantidade disponível
+        livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() - 1);
+        livro.setDisponivel(livro.getQuantidadeDisponivel() > 0);
+
+        // Salvar
+        repositorioLivro.save(livro);
         repositorioReserva.save(reserva);
 
         redirectAttributes.addFlashAttribute("sucesso",
-                "Reserva solicitada com sucesso! Aguarde a aprovação do bibliotecário.");
+                "✅ Reserva aprovada com sucesso! O livro está disponível para retirada. " +
+                        "Data de devolução prevista: " + reserva.getDataDevolucaoPrevista().toLocalDate());
+
         return "redirect:/user/minhas-reservas";
     }
 
@@ -144,7 +161,7 @@ public class UserController {
         return "user-minhas-reservas";
     }
 
-    // Cancelar reserva (apenas pendentes)
+    // Cancelar reserva
     @PostMapping("/reservas/cancelar/{reservaId}")
     public String cancelarReserva(@PathVariable Long reservaId,
                                   @AuthenticationPrincipal UserDetails userDetails,
@@ -157,12 +174,24 @@ public class UserController {
             return "redirect:/user/minhas-reservas";
         }
 
-        if (!reserva.isPendente()) {
-            redirectAttributes.addFlashAttribute("erro", "Apenas reservas pendentes podem ser canceladas.");
+        // Só permite cancelar se estiver pendente ou aprovada
+        if (!reserva.isPendente() && !reserva.isAprovada()) {
+            redirectAttributes.addFlashAttribute("erro",
+                    "Esta reserva não pode ser cancelada!");
             return "redirect:/user/minhas-reservas";
         }
 
+        // Se estiver aprovada, devolver a quantidade ao estoque
+        if (reserva.isAprovada()) {
+            Livro livro = reserva.getLivro();
+            livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() + 1);
+            livro.setDisponivel(true);
+            repositorioLivro.save(livro);
+        }
+
+        // Cancelar reserva
         reserva.setStatus("CANCELADA");
+        reserva.setObservacao("Cancelada pelo usuário");
         repositorioReserva.save(reserva);
 
         redirectAttributes.addFlashAttribute("sucesso", "Reserva cancelada com sucesso.");
