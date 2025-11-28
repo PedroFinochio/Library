@@ -1,8 +1,12 @@
+com/mcnz/spring/app/model/Reserva.class
 com/mcnz/spring/app/controller/LivroWebController.class
 com/mcnz/spring/app/service/FavoritoService.class
 com/mcnz/spring/app/config/CustomAuthenticationSuccessHandler.class
+com/mcnz/spring/app/controller/RelatorioController.class
+com/mcnz/spring/app/service/RelatorioService.class
 com/mcnz/spring/app/controller/LivroController.class
 com/mcnz/spring/app/repository/RepositorioLivro.class
+com/mcnz/spring/app/repository/RepositorioReserva.class
 com/mcnz/spring/app/controller/AdminController.class
 com/mcnz/spring/app/controller/AuthController.class
 com/mcnz/spring/app/service/CustomUserDetailsService.class

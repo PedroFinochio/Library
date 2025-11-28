@@ -6,18 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Biblioteca Digital</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
         }
-
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -27,7 +21,6 @@
             top: 0;
             z-index: 100;
         }
-
         .navbar-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -38,7 +31,6 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-
         .navbar-brand {
             display: flex;
             align-items: center;
@@ -46,14 +38,12 @@
             font-size: 1.5em;
             font-weight: bold;
         }
-
         .navbar-user {
             display: flex;
             align-items: center;
             gap: 20px;
             flex-wrap: wrap;
         }
-
         .user-info {
             display: flex;
             align-items: center;
@@ -62,7 +52,6 @@
             padding: 8px 15px;
             border-radius: 20px;
         }
-
         .user-avatar {
             width: 35px;
             height: 35px;
@@ -73,7 +62,6 @@
             justify-content: center;
             font-size: 1.2em;
         }
-
         .btn-logout {
             background: rgba(255,255,255,0.2);
             color: white;
@@ -85,18 +73,15 @@
             font-weight: 600;
             transition: all 0.3s ease;
         }
-
         .btn-logout:hover {
             background: white;
             color: #667eea;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
-
         .welcome-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -106,25 +91,18 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
             text-align: center;
         }
-
         .welcome-section h1 {
             font-size: 2.5em;
             margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
-
-        .welcome-section p {
-            font-size: 1.3em;
-            opacity: 0.95;
-        }
-
+        .welcome-section p { font-size: 1.3em; opacity: 0.95; }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
-
         .stat-card {
             background: white;
             padding: 30px;
@@ -134,13 +112,13 @@
             align-items: center;
             gap: 20px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
         }
-
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
-
         .stat-icon {
             width: 60px;
             height: 60px;
@@ -151,30 +129,19 @@
             font-size: 2em;
             flex-shrink: 0;
         }
-
         .stat-icon.purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .stat-icon.blue { background: linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%); }
         .stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         .stat-icon.orange { background: linear-gradient(135deg, #F2994A 0%, #F2C94C 100%); }
-
-        .stat-info h3 {
-            color: #333;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-        }
-
-        .stat-info p {
-            color: #999;
-            font-size: 0.9em;
-        }
-
+        .stat-icon.red { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+        .stat-info h3 { color: #333; font-size: 1.1em; margin-bottom: 5px; }
+        .stat-info p { color: #999; font-size: 0.9em; }
         .menu-section {
             background: white;
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
-
         .menu-section h2 {
             color: #333;
             font-size: 2em;
@@ -183,13 +150,11 @@
             align-items: center;
             gap: 10px;
         }
-
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
         }
-
         .menu-card {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             padding: 30px;
@@ -202,31 +167,27 @@
             display: block;
             border: 2px solid transparent;
         }
-
         .menu-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.12);
             border-color: #667eea;
         }
-
-        .menu-card .card-icon {
-            font-size: 3.5em;
-            margin-bottom: 15px;
-            display: block;
+        .menu-card .card-icon { font-size: 3.5em; margin-bottom: 15px; display: block; }
+        .menu-card h3 { color: #333; font-size: 1.4em; margin-bottom: 10px; }
+        .menu-card p { color: #666; font-size: 0.95em; line-height: 1.6; }
+        .menu-card.admin-card {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
-
-        .menu-card h3 {
-            color: #333;
-            font-size: 1.4em;
-            margin-bottom: 10px;
+        .menu-card.admin-card:hover { border-color: #f5576c; }
+        .admin-badge {
+            background: #dc3545;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            margin-left: 5px;
+            vertical-align: middle;
         }
-
-        .menu-card p {
-            color: #666;
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
-
         .quick-actions {
             margin-top: 40px;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -235,19 +196,8 @@
             color: white;
             text-align: center;
         }
-
-        .quick-actions h3 {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        .quick-actions h3 { font-size: 1.5em; margin-bottom: 20px; }
+        .action-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
         .btn-action {
             background: white;
             color: #f5576c;
@@ -257,56 +207,14 @@
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
         }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-        }
-
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
         @media (max-width: 768px) {
-            .navbar-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .welcome-section {
-                padding: 40px 20px;
-            }
-
-            .welcome-section h1 {
-                font-size: 2em;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .menu-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .menu-section {
-                padding: 30px 20px;
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .container > * {
-            animation: fadeIn 0.6s ease-out;
+            .navbar-content { flex-direction: column; text-align: center; }
+            .welcome-section { padding: 40px 20px; }
+            .welcome-section h1 { font-size: 2em; }
+            .stats-grid, .menu-grid { grid-template-columns: 1fr; }
+            .menu-section { padding: 30px 20px; }
         }
     </style>
 </head>
@@ -336,37 +244,34 @@
     </div>
 
     <div class="stats-grid">
-        <div class="stat-card">
+        <a th:href="@{/biblioteca}" class="stat-card">
             <div class="stat-icon purple">📚</div>
             <div class="stat-info">
                 <h3>Biblioteca</h3>
                 <p>Todos os livros</p>
             </div>
-        </div>
-
-        <div class="stat-card">
+        </a>
+        <a th:href="@{/biblioteca}" class="stat-card">
             <div class="stat-icon blue">🔍</div>
             <div class="stat-info">
                 <h3>Buscar</h3>
                 <p>Encontre livros</p>
             </div>
-        </div>
-
-        <div class="stat-card">
+        </a>
+        <a th:href="@{/biblioteca/favoritos}" class="stat-card">
             <div class="stat-icon green">⭐</div>
             <div class="stat-info">
                 <h3>Favoritos</h3>
                 <p>Seus preferidos</p>
             </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon orange">➕</div>
+        </a>
+        <a th:href="@{/admin/relatorios}" class="stat-card">
+            <div class="stat-icon red">📊</div>
             <div class="stat-info">
-                <h3>Adicionar</h3>
-                <p>Novo livro</p>
+                <h3>Relatórios</h3>
+                <p>Dashboard Admin</p>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="menu-section">
@@ -402,6 +307,13 @@
                 <p>Documentação completa da API para integração e testes.</p>
             </a>
 
+            <!-- RELATÓRIOS -->
+            <a th:href="@{/admin/relatorios}" class="menu-card admin-card">
+                <span class="card-icon">📊</span>
+                <h3>Relatórios <span class="admin-badge">ADMIN</span></h3>
+                <p>Dashboard completo com estatísticas e relatórios SQL avançados.</p>
+            </a>
+
             <a href="#" onclick="alert('Configure suas preferências, tema e notificações'); return false;" class="menu-card">
                 <span class="card-icon">⚙️</span>
                 <h3>Configurações</h3>
@@ -415,6 +327,7 @@
                 <a th:href="@{/biblioteca/novo}" class="btn-action">➕ Adicionar Livro</a>
                 <a th:href="@{/biblioteca}" class="btn-action">📚 Ver Biblioteca</a>
                 <a th:href="@{/biblioteca/favoritos}" class="btn-action">⭐ Ver Favoritos</a>
+                <a th:href="@{/admin/relatorios}" class="btn-action">📊 Relatórios</a>
             </div>
         </div>
     </div>

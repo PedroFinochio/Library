@@ -138,6 +138,8 @@
         .stat-icon.red { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
         .stat-icon.blue { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
         .stat-icon.green { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+        .stat-icon.purple { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
 
         .stat-info h3 {
             color: #333;
@@ -258,18 +260,18 @@
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon blue">👥</div>
+            <div class="stat-icon orange">⏳</div>
             <div class="stat-info">
-                <h3>-</h3>
-                <p>Usuários Ativos</p>
+                <h3 th:text="${reservasPendentes}">0</h3>
+                <p>Reservas Pendentes</p>
             </div>
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon green">📈</div>
+            <div class="stat-icon green">✅</div>
             <div class="stat-info">
-                <h3>-</h3>
-                <p>Livros Favoritados</p>
+                <h3 th:text="${emprestimosAtivos}">0</h3>
+                <p>Empréstimos Ativos</p>
             </div>
         </div>
     </div>
@@ -289,19 +291,19 @@
                 <p>Cadastre novos livros na biblioteca.</p>
             </a>
 
-            <a href="#" onclick="alert('Funcionalidade em desenvolvimento'); return false;" class="menu-card">
-                <span class="card-icon">👥</span>
-                <h3>Gerenciar Usuários</h3>
-                <p>Administre usuários e permissões.</p>
+            <a th:href="@{/admin/reservas}" class="menu-card">
+                <span class="card-icon">📋</span>
+                <h3>Gerenciar Reservas</h3>
+                <p>Aprove, rejeite e gerencie reservas de livros.</p>
             </a>
 
-            <a href="#" onclick="alert('Funcionalidade em desenvolvimento'); return false;" class="menu-card">
+            <a th:href="@{/admin/relatorios}" class="menu-card">
                 <span class="card-icon">📊</span>
                 <h3>Relatórios</h3>
                 <p>Visualize estatísticas e relatórios detalhados.</p>
             </a>
 
-            <a th:href="@{/swagger-ui/index.html}" class="menu-card">
+            <a th:href="@{/swagger-ui/index.html}" class="menu-card" target="_blank">
                 <span class="card-icon">🔧</span>
                 <h3>API REST</h3>
                 <p>Documentação da API para desenvolvedores.</p>
