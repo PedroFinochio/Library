@@ -158,20 +158,20 @@
             </thead>
             <tbody>
             <tr th:each="linha : ${dados}">
-                <td th:text="${linha.id}">1</td>
-                <td th:text="${linha.usuario}">Usuário</td>
-                <td th:text="${linha.livro}">Livro</td>
-                <td th:text="${#temporals.format(linha.data_reserva, 'dd/MM/yyyy HH:mm')}">Data</td>
+                <td th:text="${linha.get('id')}">1</td>
+                <td th:text="${linha.get('usuario')}">Usuário</td>
+                <td th:text="${linha.get('livro')}">Livro</td>
+                <td th:text="${linha.get('data_reserva')}">Data</td>
                 <td>
-                        <span th:class="${'status-badge status-' + #strings.toLowerCase(linha.status)}"
-                              th:text="${linha.status}">Status</span>
+                    <span th:class="${'status-badge status-' + #strings.toLowerCase(linha.get('status'))}"
+                          th:text="${linha.get('status')}">Status</span>
                 </td>
             </tr>
             </tbody>
         </table>
 
         <div th:if="${#lists.isEmpty(dados)}" style="text-align: center; padding: 60px; color: #999;">
-            <div style="font-size: 5em; margin-bottom: 20px;">📭</div>
+            <div style="font-size: 5em; margin-bottom: 20px;">🔭</div>
             <h2>Nenhuma reserva encontrada</h2>
             <p>Não há reservas no período selecionado</p>
         </div>

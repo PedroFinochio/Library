@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -30,39 +30,56 @@ public class DataInitializer implements CommandLineRunner {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public void run(String... args) {
         // Só inicializa se não houver usuários no banco
         if (repositorioUsuario.count() == 0) {
-            System.out.println("=== Inicializando dados do sistema ===");
-            inicializarUsuarios();
-            inicializarLivros();
-            inicializarReservas(); // ← NOVO: Cria reservas de teste
-            System.out.println("=== Dados inicializados com sucesso ===");
+            System.out.println("\n========================================");
+            System.out.println("📄 INICIALIZANDO DADOS DO SISTEMA");
+            System.out.println("========================================\n");
+
+            try {
+                inicializarUsuarios();
+                inicializarLivros();
+                inicializarReservas();
+
+                System.out.println("\n========================================");
+                System.out.println("✅ DADOS INICIALIZADOS COM SUCESSO!");
+                System.out.println("========================================");
+
+                imprimirEstatisticas();
+            } catch (Exception e) {
+                System.err.println("❌ ERRO ao inicializar dados: " + e.getMessage());
+                e.printStackTrace();
+            }
         } else {
-            System.out.println("=== Banco já possui dados, pulando inicialização ===");
+            System.out.println("\n========================================");
+            System.out.println("ℹ️  Banco já possui dados");
+            System.out.println("========================================");
+            imprimirEstatisticas();
         }
     }
 
     private void inicializarUsuarios() {
-        // Senha padrão para todos: senha123
+        System.out.println("👥 Criando usuários...");
+
         String senhaEncriptada = passwordEncoder.encode("senha123");
 
-        // Administradores
+        // Admin
         Usuario admin = new Usuario("admin", senhaEncriptada, "admin@biblioteca.com");
         admin.setRole("ADMIN");
+        admin.setAtivo(true);
         repositorioUsuario.save(admin);
-
-        Usuario carlos = new Usuario("carlos.admin", senhaEncriptada, "carlos@biblioteca.com");
-        carlos.setRole("ADMIN");
-        repositorioUsuario.save(carlos);
 
         // Bibliotecários
         Usuario maria = new Usuario("maria.biblio", senhaEncriptada, "maria@biblioteca.com");
         maria.setRole("BIBLIOTECARIO");
+        maria.setAtivo(true);
         repositorioUsuario.save(maria);
 
         Usuario joao = new Usuario("joao.biblio", senhaEncriptada, "joao@biblioteca.com");
         joao.setRole("BIBLIOTECARIO");
+        joao.setAtivo(true);
         repositorioUsuario.save(joao);
 
         // Usuários comuns
@@ -72,257 +89,225 @@ public class DataInitializer implements CommandLineRunner {
                 {"julia.costa", "julia.costa@email.com"},
                 {"lucas.oliveira", "lucas.oliveira@email.com"},
                 {"fernanda.lima", "fernanda.lima@email.com"},
-                {"roberto.alves", "roberto.alves@email.com"}
+                {"roberto.alves", "roberto.alves@email.com"},
+                {"carlos.mendes", "carlos.mendes@email.com"}
         };
 
         for (String[] u : usuarios) {
             Usuario user = new Usuario(u[0], senhaEncriptada, u[1]);
             user.setRole("USER");
+            user.setAtivo(true);
             repositorioUsuario.save(user);
         }
 
-        System.out.println("Usuários criados: " + repositorioUsuario.count());
+        System.out.println("   ✅ " + repositorioUsuario.count() + " usuários criados");
     }
 
     private void inicializarLivros() {
-        // titulo, autor, preco, quantidadeTotal, quantidadeDisponivel
+        System.out.println("📚 Criando livros...");
+
+        // Array com dados dos livros: título, autor, preço, qtdTotal, qtdDisponível
         Object[][] livrosData = {
-                // Livros com boa disponibilidade
-                {"Dom Casmurro", "Machado de Assis", 35.90, 5, 4},
-                {"1984", "George Orwell", 45.90, 6, 5},
-                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 39.90, 8, 7},
-                {"O Código Da Vinci", "Dan Brown", 44.90, 5, 4},
-                {"Sapiens", "Yuval Noah Harari", 64.90, 4, 3},
-                {"Orgulho e Preconceito", "Jane Austen", 32.90, 4, 3},
+                // ========== MACHADO DE ASSIS ==========
+                {"Dom Casmurro", "Machado de Assis", 5.00, 5, 4},
+                {"Memórias Póstumas de Brás Cubas", "Machado de Assis", 5.00, 4, 3},
+                {"Quincas Borba", "Machado de Assis", 5.00, 3, 2},
+                {"Esaú e Jacó", "Machado de Assis", 4.50, 2, 1},
+                {"O Alienista", "Machado de Assis", 3.00, 4, 0},
 
-                // Livros com disponibilidade média
-                {"Grande Sertão: Veredas", "Guimarães Rosa", 59.90, 3, 2},
-                {"Capitães da Areia", "Jorge Amado", 42.50, 4, 2},
-                {"O Senhor dos Anéis", "J.R.R. Tolkien", 69.90, 4, 2},
-                {"O Nome do Vento", "Patrick Rothfuss", 54.90, 3, 2},
-                {"Assassinato no Expresso do Oriente", "Agatha Christie", 34.90, 3, 2},
-                {"O Poder do Hábito", "Charles Duhigg", 49.90, 3, 1},
-                {"Código Limpo", "Robert C. Martin", 89.90, 3, 1},
+                // ========== GEORGE ORWELL ==========
+                {"1984", "George Orwell", 6.00, 6, 5},
+                {"A Revolução dos Bichos", "George Orwell", 4.00, 3, 2},
+                {"Na Pior em Paris e Londres", "George Orwell", 5.50, 2, 1},
 
-                // Livros com baixa disponibilidade (última unidade)
-                {"Fahrenheit 451", "Ray Bradbury", 38.90, 2, 1},
-                {"Neuromancer", "William Gibson", 52.90, 2, 1},
-                {"O Morro dos Ventos Uivantes", "Emily Brontë", 36.50, 2, 1},
-                {"A Metamorfose", "Franz Kafka", 29.90, 2, 1},
-                {"Crime e Castigo", "Fiódor Dostoiévski", 58.90, 2, 1},
+                // ========== J.K. ROWLING ==========
+                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 8.00, 8, 7},
+                {"Harry Potter e a Câmara Secreta", "J.K. Rowling", 8.00, 6, 4},
+                {"Harry Potter e o Prisioneiro de Azkaban", "J.K. Rowling", 8.00, 5, 3},
+                {"Harry Potter e o Cálice de Fogo", "J.K. Rowling", 9.00, 4, 2},
+                {"Harry Potter e a Ordem da Fênix", "J.K. Rowling", 9.00, 3, 1},
 
-                // Livros indisponíveis (todos emprestados)
-                {"A Ilha do Tesouro", "Robert Louis Stevenson", 33.90, 3, 0},
-                {"Design Patterns", "Erich Gamma", 125.00, 2, 0},
-                {"O Hobbit", "J.R.R. Tolkien", 42.90, 3, 0},
-                {"Cem Anos de Solidão", "Gabriel García Márquez", 49.90, 2, 0},
-                {"A Revolução dos Bichos", "George Orwell", 34.90, 2, 0}
+                // ========== DAN BROWN ==========
+                {"O Código Da Vinci", "Dan Brown", 7.00, 5, 4},
+                {"Anjos e Demônios", "Dan Brown", 7.00, 4, 3},
+                {"O Símbolo Perdido", "Dan Brown", 7.00, 3, 2},
+                {"Inferno", "Dan Brown", 7.50, 2, 1},
+
+                // ========== YUVAL NOAH HARARI ==========
+                {"Sapiens", "Yuval Noah Harari", 10.00, 4, 3},
+                {"Homo Deus", "Yuval Noah Harari", 10.00, 3, 2},
+                {"21 Lições para o Século 21", "Yuval Noah Harari", 10.00, 2, 1},
+
+                // ========== JANE AUSTEN ==========
+                {"Orgulho e Preconceito", "Jane Austen", 5.00, 4, 3},
+                {"Emma", "Jane Austen", 5.00, 3, 2},
+                {"Razão e Sensibilidade", "Jane Austen", 5.00, 2, 1},
+                {"Persuasão", "Jane Austen", 4.50, 2, 0},
+
+                // ========== J.R.R. TOLKIEN ==========
+                {"O Hobbit", "J.R.R. Tolkien", 8.00, 5, 4},
+                {"O Senhor dos Anéis: A Sociedade do Anel", "J.R.R. Tolkien", 10.00, 4, 3},
+                {"O Senhor dos Anéis: As Duas Torres", "J.R.R. Tolkien", 10.00, 3, 2},
+                {"O Senhor dos Anéis: O Retorno do Rei", "J.R.R. Tolkien", 10.00, 3, 2},
+                {"O Silmarillion", "J.R.R. Tolkien", 9.00, 2, 1},
+
+                // ========== GUIMARÃES ROSA ==========
+                {"Grande Sertão: Veredas", "Guimarães Rosa", 8.00, 3, 2},
+                {"Sagarana", "Guimarães Rosa", 6.00, 2, 1},
+
+                // ========== JORGE AMADO ==========
+                {"Capitães da Areia", "Jorge Amado", 5.50, 4, 2},
+                {"Gabriela, Cravo e Canela", "Jorge Amado", 6.00, 3, 2},
+                {"Dona Flor e Seus Dois Maridos", "Jorge Amado", 6.00, 2, 1},
+
+                // ========== PATRICK ROTHFUSS ==========
+                {"O Nome do Vento", "Patrick Rothfuss", 9.00, 3, 2},
+                {"O Temor do Sábio", "Patrick Rothfuss", 9.00, 2, 1},
+
+                // ========== CHARLES DUHIGG ==========
+                {"O Poder do Hábito", "Charles Duhigg", 7.50, 3, 2},
+
+                // ========== ROBERT C. MARTIN ==========
+                {"Código Limpo", "Robert C. Martin", 12.00, 3, 2},
+                {"Arquitetura Limpa", "Robert C. Martin", 12.00, 2, 1},
+
+                // ========== RAY BRADBURY ==========
+                {"Fahrenheit 451", "Ray Bradbury", 6.00, 2, 1},
+                {"Crônicas Marcianas", "Ray Bradbury", 6.50, 2, 1},
+
+                // ========== WILLIAM GIBSON ==========
+                {"Neuromancer", "William Gibson", 8.00, 2, 1},
+
+                // ========== EMILY BRONTË ==========
+                {"O Morro dos Ventos Uivantes", "Emily Brontë", 5.50, 2, 1},
+
+                // ========== FRANZ KAFKA ==========
+                {"A Metamorfose", "Franz Kafka", 4.00, 3, 2},
+                {"O Processo", "Franz Kafka", 5.00, 2, 1},
+                {"O Castelo", "Franz Kafka", 5.50, 2, 0},
+
+                // ========== FIÓDOR DOSTOIÉVSKI ==========
+                {"Crime e Castigo", "Fiódor Dostoiévski", 8.00, 3, 2},
+                {"Os Irmãos Karamázov", "Fiódor Dostoiévski", 9.00, 2, 1},
+                {"O Idiota", "Fiódor Dostoiévski", 8.00, 2, 0},
+
+                // ========== ROBERT LOUIS STEVENSON ==========
+                {"A Ilha do Tesouro", "Robert Louis Stevenson", 5.00, 3, 0},
+                {"O Médico e o Monstro", "Robert Louis Stevenson", 4.50, 2, 1},
+
+                // ========== ERICH GAMMA (Gang of Four) ==========
+                {"Design Patterns", "Erich Gamma", 15.00, 2, 0},
+
+                // ========== GABRIEL GARCÍA MÁRQUEZ ==========
+                {"Cem Anos de Solidão", "Gabriel García Márquez", 8.00, 3, 1},
+                {"O Amor nos Tempos do Cólera", "Gabriel García Márquez", 7.00, 2, 0},
+                {"Crônica de uma Morte Anunciada", "Gabriel García Márquez", 6.00, 2, 1},
+
+                // ========== AGATHA CHRISTIE ==========
+                {"Assassinato no Expresso do Oriente", "Agatha Christie", 6.00, 3, 0},
+                {"Morte no Nilo", "Agatha Christie", 6.00, 2, 1},
+                {"O Caso dos Dez Negrinhos", "Agatha Christie", 6.50, 2, 1},
+
+                // ========== OUTROS CLÁSSICOS ==========
+                {"O Pequeno Príncipe", "Antoine de Saint-Exupéry", 4.00, 5, 4},
+                {"1984", "George Orwell", 6.00, 4, 3},
+                {"Admirável Mundo Novo", "Aldous Huxley", 6.50, 3, 2},
+                {"Laranja Mecânica", "Anthony Burgess", 6.00, 2, 1}
         };
 
-        for (Object[] l : livrosData) {
+        for (Object[] dados : livrosData) {
             Livro livro = new Livro();
-            livro.setTitulo((String) l[0]);
-            livro.setAutor((String) l[1]);
-            livro.setPreco((Double) l[2]);
-            int qtdTotal = (Integer) l[3];
-            int qtdDisponivel = (Integer) l[4];
-
-            livro.setQuantidade(qtdTotal);
-            livro.setQuantidadeDisponivel(qtdDisponivel);
-            livro.setDisponivel(qtdDisponivel > 0);
+            livro.setTitulo((String) dados[0]);
+            livro.setAutor((String) dados[1]);
+            livro.setPreco((Double) dados[2]);
+            livro.setQuantidade((Integer) dados[3]);
+            livro.setQuantidadeDisponivel((Integer) dados[4]);
+            livro.setDisponivel((Integer) dados[4] > 0);
 
             repositorioLivro.save(livro);
-
-            // Log para debug
-            System.out.println(String.format("Livro: %s - Total: %d, Disponível: %d, Status: %s",
-                    livro.getTitulo(), qtdTotal, qtdDisponivel, (qtdDisponivel > 0 ? "Disponível" : "Indisponível")));
         }
 
-        System.out.println("Livros criados: " + repositorioLivro.count());
-        System.out.println("Livros disponíveis para reserva: " +
-                repositorioLivro.findAll().stream().filter(l -> l.getQuantidadeDisponivel() > 0).count());
-        System.out.println("Livros indisponíveis: " +
-                repositorioLivro.findAll().stream().filter(l -> l.getQuantidadeDisponivel() == 0).count());
+        System.out.println("   ✅ " + repositorioLivro.count() + " livros criados");
     }
 
     private void inicializarReservas() {
-        System.out.println("\n=== Criando reservas de teste ===");
+        System.out.println("📋 Criando reservas...");
 
-        List<Usuario> usuarios = repositorioUsuario.findAll();
-        List<Livro> livros = repositorioLivro.findAll();
+        var usuarios = repositorioUsuario.findAll();
+        var livros = repositorioLivro.findAll();
 
-        if (usuarios.size() < 6 || livros.isEmpty()) {
-            System.out.println("⚠️  Não há usuários ou livros suficientes para criar reservas");
+        if (usuarios.size() < 7 || livros.size() < 20) {
+            System.err.println("   ⚠️ Dados insuficientes para criar reservas");
             return;
         }
 
-        // Pegar usuários comuns (índices 4-9 são os users criados)
-        Usuario ana = usuarios.get(4);      // ana.silva
-        Usuario pedro = usuarios.get(5);    // pedro.santos
-        Usuario julia = usuarios.get(6);    // julia.costa
-        Usuario lucas = usuarios.get(7);    // lucas.oliveira
-        Usuario fernanda = usuarios.get(8); // fernanda.lima
-        Usuario roberto = usuarios.get(9);  // roberto.alves
+        // Pegar usuários comuns (índices 3-9)
+        Usuario ana = usuarios.get(3);
+        Usuario pedro = usuarios.get(4);
+        Usuario julia = usuarios.get(5);
+        Usuario lucas = usuarios.get(6);
+        Usuario fernanda = usuarios.get(7);
+        Usuario roberto = usuarios.get(8);
+        Usuario carlos = usuarios.get(9);
 
-        // ============ RESERVAS PENDENTES (aguardando aprovação) ============
-        System.out.println("Criando reservas PENDENTES...");
+        // === RESERVAS PENDENTES (3) ===
+        criarReserva(ana, livros.get(0), "PENDENTE", -2, 0, null);
+        criarReserva(pedro, livros.get(1), "PENDENTE", -5, 0, null);
+        criarReserva(julia, livros.get(4), "PENDENTE", -24, 0, null);
 
-        Reserva r1 = new Reserva(ana, livros.get(0)); // Dom Casmurro
-        r1.setStatus("PENDENTE");
-        r1.setDataReserva(LocalDateTime.now().minusHours(2));
-        repositorioReserva.save(r1);
+        // === RESERVAS APROVADAS (5) ===
+        criarReserva(lucas, livros.get(2), "APROVADA", -72, 11, null);
+        criarReserva(fernanda, livros.get(3), "APROVADA", -120, 9, null);
+        criarReserva(roberto, livros.get(8), "APROVADA", -168, 7, null);
+        criarReserva(ana, livros.get(9), "APROVADA", -240, 4, null);
+        criarReserva(carlos, livros.get(10), "APROVADA", -96, 6, null);
 
-        Reserva r2 = new Reserva(pedro, livros.get(1)); // 1984
-        r2.setStatus("PENDENTE");
-        r2.setDataReserva(LocalDateTime.now().minusHours(5));
-        repositorioReserva.save(r2);
+        // === RESERVAS DEVOLVIDAS (7) ===
+        criarReserva(pedro, livros.get(5), "DEVOLVIDA", -720, -384, -360);
+        criarReserva(julia, livros.get(6), "DEVOLVIDA", -600, -264, -240);
+        criarReserva(lucas, livros.get(7), "DEVOLVIDA", -480, -144, -120);
+        criarReserva(fernanda, livros.get(11), "DEVOLVIDA", -432, -96, -72);
+        criarReserva(roberto, livros.get(12), "DEVOLVIDA", -360, -24, -12);
+        criarReserva(carlos, livros.get(13), "DEVOLVIDA", -288, -48, -36);
+        criarReserva(ana, livros.get(14), "DEVOLVIDA", -1080, -744, -720);
 
-        Reserva r3 = new Reserva(julia, livros.get(4)); // Sapiens
-        r3.setStatus("PENDENTE");
-        r3.setDataReserva(LocalDateTime.now().minusDays(1));
-        repositorioReserva.save(r3);
+        // === RESERVAS REJEITADAS (2) ===
+        criarReserva(pedro, livros.get(18), "REJEITADA", -192, 0, null);
+        criarReserva(julia, livros.get(19), "REJEITADA", -144, 0, null);
 
-        // ============ RESERVAS APROVADAS (empréstimos ativos) ============
-        System.out.println("Criando reservas APROVADAS (empréstimos ativos)...");
+        // === RESERVAS CANCELADAS (2) ===
+        criarReserva(lucas, livros.get(15), "CANCELADA", -96, 0, null);
+        criarReserva(fernanda, livros.get(16), "CANCELADA", -48, 0, null);
 
-        Reserva r4 = new Reserva(lucas, livros.get(2)); // Harry Potter
-        r4.setStatus("APROVADA");
-        r4.setDataReserva(LocalDateTime.now().minusDays(3));
-        r4.setDataDevolucaoPrevista(LocalDateTime.now().plusDays(11));
-        repositorioReserva.save(r4);
+        System.out.println("   ✅ " + repositorioReserva.count() + " reservas criadas");
+    }
 
-        Reserva r5 = new Reserva(fernanda, livros.get(3)); // Código Da Vinci
-        r5.setStatus("APROVADA");
-        r5.setDataReserva(LocalDateTime.now().minusDays(5));
-        r5.setDataDevolucaoPrevista(LocalDateTime.now().plusDays(9));
-        repositorioReserva.save(r5);
+    private void criarReserva(Usuario usuario, Livro livro, String status,
+                              int horasReserva, int diasDevolucao, Integer horasDevolucao) {
+        Reserva reserva = new Reserva(usuario, livro);
+        reserva.setStatus(status);
+        reserva.setDataReserva(LocalDateTime.now().plusHours(horasReserva));
 
-        Reserva r6 = new Reserva(roberto, livros.get(8)); // Senhor dos Anéis
-        r6.setStatus("APROVADA");
-        r6.setDataReserva(LocalDateTime.now().minusDays(7));
-        r6.setDataDevolucaoPrevista(LocalDateTime.now().plusDays(7));
-        repositorioReserva.save(r6);
+        if (diasDevolucao > 0) {
+            reserva.setDataDevolucaoPrevista(LocalDateTime.now().plusDays(diasDevolucao));
+        }
 
-        Reserva r7 = new Reserva(ana, livros.get(9)); // O Nome do Vento
-        r7.setStatus("APROVADA");
-        r7.setDataReserva(LocalDateTime.now().minusDays(10));
-        r7.setDataDevolucaoPrevista(LocalDateTime.now().plusDays(4));
-        repositorioReserva.save(r7);
+        if (horasDevolucao != null) {
+            reserva.setDataDevolucao(LocalDateTime.now().plusHours(horasDevolucao));
+        }
 
-        // ============ RESERVAS DEVOLVIDAS (histórico) ============
-        System.out.println("Criando reservas DEVOLVIDAS...");
+        repositorioReserva.save(reserva);
+    }
 
-        Reserva r8 = new Reserva(pedro, livros.get(5)); // Orgulho e Preconceito
-        r8.setStatus("DEVOLVIDA");
-        r8.setDataReserva(LocalDateTime.now().minusDays(30));
-        r8.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(16));
-        r8.setDataDevolucao(LocalDateTime.now().minusDays(15));
-        repositorioReserva.save(r8);
-
-        Reserva r9 = new Reserva(julia, livros.get(6)); // Grande Sertão
-        r9.setStatus("DEVOLVIDA");
-        r9.setDataReserva(LocalDateTime.now().minusDays(25));
-        r9.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(11));
-        r9.setDataDevolucao(LocalDateTime.now().minusDays(10));
-        repositorioReserva.save(r9);
-
-        Reserva r10 = new Reserva(lucas, livros.get(7)); // Capitães da Areia
-        r10.setStatus("DEVOLVIDA");
-        r10.setDataReserva(LocalDateTime.now().minusDays(20));
-        r10.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(6));
-        r10.setDataDevolucao(LocalDateTime.now().minusDays(5));
-        repositorioReserva.save(r10);
-
-        Reserva r11 = new Reserva(fernanda, livros.get(10)); // Assassinato no Expresso
-        r11.setStatus("DEVOLVIDA");
-        r11.setDataReserva(LocalDateTime.now().minusDays(18));
-        r11.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(4));
-        r11.setDataDevolucao(LocalDateTime.now().minusDays(3));
-        repositorioReserva.save(r11);
-
-        Reserva r12 = new Reserva(roberto, livros.get(11)); // O Poder do Hábito
-        r12.setStatus("DEVOLVIDA");
-        r12.setDataReserva(LocalDateTime.now().minusDays(15));
-        r12.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(1));
-        r12.setDataDevolucao(LocalDateTime.now().minusHours(12));
-        repositorioReserva.save(r12);
-
-        // ============ RESERVAS REJEITADAS ============
-        System.out.println("Criando reservas REJEITADAS...");
-
-        Reserva r13 = new Reserva(ana, livros.get(18)); // A Ilha do Tesouro (indisponível)
-        r13.setStatus("REJEITADA");
-        r13.setDataReserva(LocalDateTime.now().minusDays(8));
-        r13.setObservacao("Livro sem estoque disponível no momento");
-        repositorioReserva.save(r13);
-
-        Reserva r14 = new Reserva(pedro, livros.get(19)); // Design Patterns (indisponível)
-        r14.setStatus("REJEITADA");
-        r14.setDataReserva(LocalDateTime.now().minusDays(6));
-        r14.setObservacao("Todos os exemplares emprestados");
-        repositorioReserva.save(r14);
-
-        // ============ RESERVAS CANCELADAS ============
-        System.out.println("Criando reservas CANCELADAS...");
-
-        Reserva r15 = new Reserva(julia, livros.get(12)); // Código Limpo
-        r15.setStatus("CANCELADA");
-        r15.setDataReserva(LocalDateTime.now().minusDays(4));
-        r15.setObservacao("Usuário cancelou a reserva");
-        repositorioReserva.save(r15);
-
-        Reserva r16 = new Reserva(lucas, livros.get(13)); // Fahrenheit 451
-        r16.setStatus("CANCELADA");
-        r16.setDataReserva(LocalDateTime.now().minusDays(2));
-        r16.setObservacao("Cancelada pelo sistema - não retirado no prazo");
-        repositorioReserva.save(r16);
-
-        // ============ MAIS RESERVAS PARA ANÁLISE ESTATÍSTICA ============
-        System.out.println("Criando reservas adicionais para estatísticas...");
-
-        // Ana Silva - usuário mais ativo (total: 4 reservas)
-        Reserva r17 = new Reserva(ana, livros.get(14)); // Neuromancer
-        r17.setStatus("DEVOLVIDA");
-        r17.setDataReserva(LocalDateTime.now().minusDays(45));
-        r17.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(31));
-        r17.setDataDevolucao(LocalDateTime.now().minusDays(30));
-        repositorioReserva.save(r17);
-
-        // Pedro Santos - 3 reservas totais
-        Reserva r18 = new Reserva(pedro, livros.get(15)); // Morro dos Ventos Uivantes
-        r18.setStatus("DEVOLVIDA");
-        r18.setDataReserva(LocalDateTime.now().minusDays(40));
-        r18.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(26));
-        r18.setDataDevolucao(LocalDateTime.now().minusDays(25));
-        repositorioReserva.save(r18);
-
-        // Júlia Costa - 3 reservas totais
-        Reserva r19 = new Reserva(julia, livros.get(16)); // A Metamorfose
-        r19.setStatus("DEVOLVIDA");
-        r19.setDataReserva(LocalDateTime.now().minusDays(35));
-        r19.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(21));
-        r19.setDataDevolucao(LocalDateTime.now().minusDays(20));
-        repositorioReserva.save(r19);
-
-        // Lucas Oliveira - 3 reservas totais
-        Reserva r20 = new Reserva(lucas, livros.get(17)); // Crime e Castigo
-        r20.setStatus("DEVOLVIDA");
-        r20.setDataReserva(LocalDateTime.now().minusDays(50));
-        r20.setDataDevolucaoPrevista(LocalDateTime.now().minusDays(36));
-        r20.setDataDevolucao(LocalDateTime.now().minusDays(35));
-        repositorioReserva.save(r20);
-
-        // Estatísticas finais
-        long total = repositorioReserva.count();
-        long pendentes = repositorioReserva.countPendentes();
-        long aprovadas = repositorioReserva.countAprovadas();
-
-        System.out.println("\n✅ Reservas criadas com sucesso!");
-        System.out.println("   📊 Total de reservas: " + total);
-        System.out.println("   ⏳ Pendentes: " + pendentes);
-        System.out.println("   ✅ Aprovadas (empréstimos ativos): " + aprovadas);
-        System.out.println("   📚 Devolvidas: " + repositorioReserva.findByStatus("DEVOLVIDA").size());
-        System.out.println("   ❌ Rejeitadas: " + repositorioReserva.findByStatus("REJEITADA").size());
-        System.out.println("   🚫 Canceladas: " + repositorioReserva.findByStatus("CANCELADA").size());
+    private void imprimirEstatisticas() {
+        System.out.println("\n📊 ESTATÍSTICAS DO SISTEMA:");
+        System.out.println("   👥 Usuários: " + repositorioUsuario.count());
+        System.out.println("   📚 Livros: " + repositorioLivro.count());
+        System.out.println("   📋 Reservas: " + repositorioReserva.count());
+        System.out.println("   ⏳ Pendentes: " + repositorioReserva.countPendentes());
+        System.out.println("   ✅ Aprovadas: " + repositorioReserva.countAprovadas());
+        System.out.println("   🔓 Disponíveis: " + repositorioLivro.countDisponiveis());
+        System.out.println("   🔕 Indisponíveis: " + repositorioLivro.countIndisponiveis());
+        System.out.println();
     }
 }

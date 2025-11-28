@@ -24,13 +24,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
         }
         .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             font-size: 1.5em;
             font-weight: bold;
             text-decoration: none;
@@ -43,11 +38,6 @@
             font-weight: 600;
             background: white;
             color: #667eea;
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         .container {
             max-width: 1400px;
@@ -66,10 +56,6 @@
             font-size: 2em;
             margin-bottom: 10px;
         }
-        .header-section p {
-            color: #666;
-            font-size: 1.1em;
-        }
         .sql-badge {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -79,6 +65,13 @@
             font-size: 0.9em;
             font-weight: 600;
             margin-top: 10px;
+        }
+        .debug-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
         }
         .table-container {
             background: white;
@@ -102,7 +95,6 @@
             font-weight: 600;
             text-transform: uppercase;
             font-size: 0.85em;
-            letter-spacing: 0.5px;
         }
         td {
             padding: 15px;
@@ -117,10 +109,6 @@
             padding: 60px 20px;
             color: #999;
         }
-        .empty-state-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-        }
         .status-badge {
             padding: 6px 12px;
             border-radius: 15px;
@@ -132,69 +120,45 @@
         .status-rejeitada { background: #f8d7da; color: #721c24; }
         .status-devolvida { background: #d1ecf1; color: #0c5460; }
         .status-cancelada { background: #e9ecef; color: #6c757d; }
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .btn-action {
-            padding: 12px 25px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-        .btn-back {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-print {
-            background: #17a2b8;
-            color: white;
-        }
-        .btn-export {
-            background: #28a745;
-            color: white;
-        }
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        @media print {
-            .navbar, .actions { display: none; }
-        }
     </style>
 </head>
 <body>
 <nav class="navbar">
     <div class="navbar-content">
-        <a th:href="@{/home}" class="navbar-brand">
-            <span>📊</span>
-            <span>Relatórios</span>
-        </a>
-        <a th:href="@{/admin/relatorios}" class="btn">← Voltar ao Dashboard</a>
+        <span class="navbar-brand">📊 Relatório</span>
+        <a th:href="@{/admin/relatorios}" class="btn">← Voltar</a>
     </div>
 </nav>
 
 <div class="container">
     <div class="header-section">
         <h1 th:text="${titulo}">Título do Relatório</h1>
-        <p th:text="${descricao}">Descrição da consulta SQL utilizada</p>
+        <p th:text="${descricao}">Descrição</p>
         <span class="sql-badge">🔍 Consulta SQL Complexa</span>
     </div>
 
+    <!-- DEBUG: Mostrar contagem de registros -->
+    <div class="debug-info" th:if="${dados != null}">
+        <strong>🔍 Debug:</strong>
+        Total de registros retornados: <span th:text="${dados.size()}">0</span>
+        <br>
+        <span th:if="${dados.isEmpty()}">⚠️ Lista está vazia!</span>
+        <span th:unless="${dados.isEmpty()}">✅ Dados encontrados!</span>
+    </div>
+
     <div class="table-container">
-        <div th:if="${#lists.isEmpty(dados)}" class="empty-state">
-            <div class="empty-state-icon">📭</div>
+        <!-- Estado vazio -->
+        <div th:if="${dados == null or dados.isEmpty()}" class="empty-state">
+            <div style="font-size: 5em; margin-bottom: 20px;">🔭</div>
             <h2>Nenhum dado encontrado</h2>
             <p>Não há registros para exibir neste relatório</p>
         </div>
 
-        <table th:unless="${#lists.isEmpty(dados)}">
+        <!-- Tabela com dados -->
+        <table th:if="${dados != null and !dados.isEmpty()}">
             <thead>
             <tr>
+                <!-- Gera cabeçalhos dinamicamente -->
                 <th th:each="coluna : ${dados[0].keySet()}"
                     th:text="${#strings.capitalize(#strings.replace(coluna, '_', ' '))}">
                     Coluna
@@ -202,65 +166,42 @@
             </tr>
             </thead>
             <tbody>
+            <!-- Gera linhas dinamicamente - SINTAXE CORRIGIDA -->
             <tr th:each="linha : ${dados}">
                 <td th:each="coluna : ${linha.keySet()}">
-                    <!-- Status com badge colorido -->
+                    <!-- Status com badge -->
                     <span th:if="${coluna == 'status'}"
-                          th:class="${'status-badge status-' + #strings.toLowerCase(linha[coluna])}"
-                          th:text="${linha[coluna]}">
-                        </span>
+                          th:class="${'status-badge status-' + #strings.toLowerCase(linha.get(coluna))}"
+                          th:text="${linha.get(coluna)}">
+                    </span>
+
                     <!-- Valores monetários -->
                     <span th:if="${coluna == 'preco' or coluna == 'preco_medio' or coluna == 'preco_minimo' or coluna == 'preco_maximo'}"
-                          th:text="${'R$ ' + #numbers.formatDecimal(linha[coluna], 1, 2)}">
-                        </span>
-                    <!-- Datas -->
-                    <span th:if="${coluna == 'data_reserva' or coluna == 'devolucao_prevista'}"
-                          th:text="${linha[coluna] != null ? #temporals.format(linha[coluna], 'dd/MM/yyyy HH:mm') : '-'}">
-                        </span>
-                    <!-- Outros valores -->
-                    <span th:unless="${coluna == 'status' or coluna == 'preco' or coluna == 'preco_medio' or coluna == 'preco_minimo' or coluna == 'preco_maximo' or coluna == 'data_reserva' or coluna == 'devolucao_prevista'}"
-                          th:text="${linha[coluna] != null ? linha[coluna] : '-'}">
-                        </span>
+                          th:text="${linha.get(coluna) != null ? 'R$ ' + #numbers.formatDecimal(linha.get(coluna), 1, 2) : '-'}">
+                    </span>
+
+                    <!-- Outros valores - CORRIGIDO -->
+                    <!-- Agora as datas já vêm formatadas do SQL, então não precisamos formatar novamente -->
+                    <span th:unless="${coluna == 'status' or coluna == 'preco' or coluna == 'preco_medio' or coluna == 'preco_minimo' or coluna == 'preco_maximo'}"
+                          th:text="${linha.get(coluna) != null ? linha.get(coluna) : '-'}">
+                    </span>
                 </td>
             </tr>
             </tbody>
         </table>
-
-        <div class="actions" th:unless="${#lists.isEmpty(dados)}">
-            <a th:href="@{/admin/relatorios}" class="btn-action btn-back">← Voltar ao Dashboard</a>
-            <button onclick="window.print()" class="btn-action btn-print">🖨️ Imprimir</button>
-            <button onclick="exportarCSV()" class="btn-action btn-export">📥 Exportar CSV</button>
-        </div>
     </div>
 </div>
 
 <script th:inline="javascript">
-    function exportarCSV() {
-        const dados = /*[[${dados}]]*/ [];
-        if (dados.length === 0) return;
+    // Debug no console
+    console.log('Dados recebidos:', /*[[${dados}]]*/ []);
+    console.log('Total de registros:', /*[[${dados != null ? dados.size() : 0}]]*/ 0);
 
-        // Cabeçalhos
-        const headers = Object.keys(dados[0]);
-        let csv = headers.join(',') + '\n';
-
-        // Dados
-        dados.forEach(linha => {
-            const valores = headers.map(h => {
-                let valor = linha[h];
-                if (valor === null || valor === undefined) return '';
-                // Escapar vírgulas e aspas
-                valor = String(valor).replace(/"/g, '""');
-                return '"' + valor + '"';
-            });
-            csv += valores.join(',') + '\n';
-        });
-
-        // Download
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'relatorio_' + new Date().getTime() + '.csv';
-        link.click();
+    // Se houver dados, mostrar primeiro registro
+    const dados = /*[[${dados}]]*/ [];
+    if (dados && dados.length > 0) {
+        console.log('Primeiro registro:', dados[0]);
+        console.log('Colunas disponíveis:', Object.keys(dados[0]));
     }
 </script>
 </body>

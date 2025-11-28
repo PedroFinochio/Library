@@ -46,17 +46,17 @@ public interface RepositorioReserva extends JpaRepository<Reserva, Long> {
     // Busca reservas do usuário por status
     List<Reserva> findByUsuarioAndStatusOrderByDataReservaDesc(Usuario usuario, String status);
 
-    // ==================== CONSULTAS SQL COMPLEXAS PARA RELATÓRIOS ====================
+    // ==================== CONSULTAS SQL COMPLEXAS PARA RELATÓRIOS - CORRIGIDAS ====================
 
-    // 1. JUNÇÕES MÚLTIPLAS - Relatório completo de reservas (3 tabelas: Reservas + Usuários + Livros)
+    // 1. JUNÇÕES MÚLTIPLAS - Relatório completo de reservas (CORRIGIDO - datas como STRING)
     @Query(value = "SELECT " +
             "r.id AS reserva_id, " +
             "u.username AS usuario, " +
             "u.email AS email, " +
             "l.titulo AS livro, " +
             "l.autor AS autor, " +
-            "r.data_reserva AS data_reserva, " +
-            "r.data_devolucao_prevista AS devolucao_prevista, " +
+            "DATE_FORMAT(r.data_reserva, '%d/%m/%Y %H:%i') AS data_reserva, " +
+            "DATE_FORMAT(r.data_devolucao_prevista, '%d/%m/%Y') AS devolucao_prevista, " +
             "r.status AS status, " +
             "r.observacao AS observacao " +
             "FROM reservas r " +
@@ -99,12 +99,12 @@ public interface RepositorioReserva extends JpaRepository<Reserva, Long> {
             nativeQuery = true)
     List<Map<String, Object>> findTopLivrosMaisReservados(@Param("limite") int limite);
 
-    // 5b. ORDENAÇÃO E LIMITAÇÃO - Últimas reservas do sistema
+    // 5b. ORDENAÇÃO E LIMITAÇÃO - Últimas reservas do sistema (CORRIGIDO)
     @Query(value = "SELECT " +
             "r.id AS id, " +
             "u.username AS usuario, " +
             "l.titulo AS livro, " +
-            "r.data_reserva AS data_reserva, " +
+            "DATE_FORMAT(r.data_reserva, '%d/%m/%Y %H:%i') AS data_reserva, " +
             "r.status AS status " +
             "FROM reservas r " +
             "INNER JOIN usuarios u ON r.usuario_id = u.id " +
@@ -124,12 +124,12 @@ public interface RepositorioReserva extends JpaRepository<Reserva, Long> {
             nativeQuery = true)
     List<Map<String, Object>> findReservasPorStatus();
 
-    // FILTRO COM BETWEEN - Reservas por período de datas
+    // FILTRO COM BETWEEN - Reservas por período de datas (CORRIGIDO)
     @Query(value = "SELECT " +
             "r.id AS id, " +
             "u.username AS usuario, " +
             "l.titulo AS livro, " +
-            "r.data_reserva AS data_reserva, " +
+            "DATE_FORMAT(r.data_reserva, '%d/%m/%Y %H:%i') AS data_reserva, " +
             "r.status AS status " +
             "FROM reservas r " +
             "INNER JOIN usuarios u ON r.usuario_id = u.id " +

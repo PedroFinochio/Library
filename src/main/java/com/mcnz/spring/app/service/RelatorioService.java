@@ -28,45 +28,41 @@ public class RelatorioService {
         Map<String, Object> estatisticas = new HashMap<>();
 
         try {
-            estatisticas.put("totalLivros", repositorioLivro.count());
+            long totalLivros = repositorioLivro.count();
+            long totalUsuarios = repositorioUsuario.count();
+            long totalReservas = repositorioReserva.count();
+            long reservasPendentes = repositorioReserva.countPendentes();
+            long reservasAprovadas = repositorioReserva.countAprovadas();
+            long livrosDisponiveis = repositorioLivro.countDisponiveis();
+            long livrosIndisponiveis = repositorioLivro.countIndisponiveis();
+
+            estatisticas.put("totalLivros", totalLivros);
+            estatisticas.put("totalUsuarios", totalUsuarios);
+            estatisticas.put("totalReservas", totalReservas);
+            estatisticas.put("reservasPendentes", reservasPendentes);
+            estatisticas.put("reservasAprovadas", reservasAprovadas);
+            estatisticas.put("livrosDisponiveis", livrosDisponiveis);
+            estatisticas.put("livrosIndisponiveis", livrosIndisponiveis);
+
+            // Cálculos adicionais
+            double taxaDisponibilidade = totalLivros > 0
+                    ? Math.round((livrosDisponiveis * 100.0 / totalLivros) * 10.0) / 10.0
+                    : 0.0;
+            estatisticas.put("taxaDisponibilidade", taxaDisponibilidade);
+
+            System.out.println("📊 Dashboard carregado: " + totalLivros + " livros, " +
+                    totalReservas + " reservas");
+
         } catch (Exception e) {
+            System.err.println("❌ Erro ao carregar dashboard: " + e.getMessage());
             estatisticas.put("totalLivros", 0L);
-        }
-
-        try {
-            estatisticas.put("totalUsuarios", repositorioUsuario.count());
-        } catch (Exception e) {
             estatisticas.put("totalUsuarios", 0L);
-        }
-
-        try {
-            estatisticas.put("totalReservas", repositorioReserva.count());
-        } catch (Exception e) {
             estatisticas.put("totalReservas", 0L);
-        }
-
-        try {
-            estatisticas.put("reservasPendentes", repositorioReserva.countPendentes());
-        } catch (Exception e) {
             estatisticas.put("reservasPendentes", 0L);
-        }
-
-        try {
-            estatisticas.put("reservasAprovadas", repositorioReserva.countAprovadas());
-        } catch (Exception e) {
             estatisticas.put("reservasAprovadas", 0L);
-        }
-
-        try {
-            estatisticas.put("livrosDisponiveis", repositorioLivro.countDisponiveis());
-        } catch (Exception e) {
             estatisticas.put("livrosDisponiveis", 0L);
-        }
-
-        try {
-            estatisticas.put("livrosIndisponiveis", repositorioLivro.countIndisponiveis());
-        } catch (Exception e) {
             estatisticas.put("livrosIndisponiveis", 0L);
+            estatisticas.put("taxaDisponibilidade", 0.0);
         }
 
         return estatisticas;
@@ -75,9 +71,12 @@ public class RelatorioService {
     // 1. JUNÇÕES MÚLTIPLAS - Relatório completo de reservas
     public List<Map<String, Object>> getRelatorioReservasCompleto() {
         try {
-            return repositorioReserva.findRelatorioReservasCompleto();
+            List<Map<String, Object>> resultado = repositorioReserva.findRelatorioReservasCompleto();
+            System.out.println("✅ Relatório completo: " + resultado.size() + " registros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getRelatorioReservasCompleto: " + e.getMessage());
+            System.err.println("❌ Erro getRelatorioReservasCompleto: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -85,9 +84,12 @@ public class RelatorioService {
     // 2. SUBCONSULTAS - Livros mais reservados que a média
     public List<Map<String, Object>> getLivrosMaisReservadosQueMedia() {
         try {
-            return repositorioLivro.findLivrosMaisReservadosQueMedia();
+            List<Map<String, Object>> resultado = repositorioLivro.findLivrosMaisReservadosQueMedia();
+            System.out.println("✅ Livros acima da média: " + resultado.size() + " livros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getLivrosMaisReservadosQueMedia: " + e.getMessage());
+            System.err.println("❌ Erro getLivrosMaisReservadosQueMedia: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -95,9 +97,12 @@ public class RelatorioService {
     // 2b. SUBCONSULTAS - Usuários sem reservas
     public List<Map<String, Object>> getUsuariosSemReservas() {
         try {
-            return repositorioUsuario.findUsuariosSemReservas();
+            List<Map<String, Object>> resultado = repositorioUsuario.findUsuariosSemReservas();
+            System.out.println("✅ Usuários sem reservas: " + resultado.size() + " usuários");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getUsuariosSemReservas: " + e.getMessage());
+            System.err.println("❌ Erro getUsuariosSemReservas: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -105,9 +110,12 @@ public class RelatorioService {
     // 3. AGREGADAS - Estatísticas de reservas por usuário
     public List<Map<String, Object>> getEstatisticasReservasPorUsuario() {
         try {
-            return repositorioReserva.findEstatisticasReservasPorUsuario();
+            List<Map<String, Object>> resultado = repositorioReserva.findEstatisticasReservasPorUsuario();
+            System.out.println("✅ Estatísticas por usuário: " + resultado.size() + " usuários");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getEstatisticasReservasPorUsuario: " + e.getMessage());
+            System.err.println("❌ Erro getEstatisticasReservasPorUsuario: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -115,9 +123,12 @@ public class RelatorioService {
     // 3b. AGREGADAS - Estatísticas de livros por autor
     public List<Map<String, Object>> getEstatisticasLivrosPorAutor() {
         try {
-            return repositorioLivro.findEstatisticasLivrosPorAutor();
+            List<Map<String, Object>> resultado = repositorioLivro.findEstatisticasLivrosPorAutor();
+            System.out.println("✅ Estatísticas por autor: " + resultado.size() + " autores");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getEstatisticasLivrosPorAutor: " + e.getMessage());
+            System.err.println("❌ Erro getEstatisticasLivrosPorAutor: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -125,9 +136,12 @@ public class RelatorioService {
     // 3c. AGREGADAS - Livros com baixo estoque
     public List<Map<String, Object>> getLivrosBaixoEstoque() {
         try {
-            return repositorioLivro.findLivrosBaixoEstoque();
+            List<Map<String, Object>> resultado = repositorioLivro.findLivrosBaixoEstoque();
+            System.out.println("✅ Livros baixo estoque: " + resultado.size() + " livros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getLivrosBaixoEstoque: " + e.getMessage());
+            System.err.println("❌ Erro getLivrosBaixoEstoque: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -136,11 +150,15 @@ public class RelatorioService {
     public List<Map<String, Object>> buscaAvancadaLivros(String termo) {
         try {
             if (termo == null || termo.trim().isEmpty()) {
+                System.out.println("⚠️ Termo de busca vazio");
                 return Collections.emptyList();
             }
-            return repositorioLivro.findBuscaAvancada(termo);
+            List<Map<String, Object>> resultado = repositorioLivro.findBuscaAvancada(termo);
+            System.out.println("✅ Busca '" + termo + "': " + resultado.size() + " resultados");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro buscaAvancadaLivros: " + e.getMessage());
+            System.err.println("❌ Erro buscaAvancadaLivros: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -148,9 +166,12 @@ public class RelatorioService {
     // 4b. MULTICONJUNTO - Livros mais caros que autor
     public List<Map<String, Object>> getLivrosCarosQueAutor(String autor) {
         try {
-            return repositorioLivro.findLivrosCarosQueAutor(autor);
+            List<Map<String, Object>> resultado = repositorioLivro.findLivrosCarosQueAutor(autor);
+            System.out.println("✅ Livros mais caros que " + autor + ": " + resultado.size() + " livros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getLivrosCarosQueAutor: " + e.getMessage());
+            System.err.println("❌ Erro getLivrosCarosQueAutor: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -158,9 +179,12 @@ public class RelatorioService {
     // 5. ORDENAÇÃO E LIMITAÇÃO - Top livros mais caros
     public List<Map<String, Object>> getTopLivrosMaisCaros(int limite) {
         try {
-            return repositorioLivro.findTopLivrosMaisCaros(limite);
+            List<Map<String, Object>> resultado = repositorioLivro.findTopLivrosMaisCaros(limite);
+            System.out.println("✅ Top " + limite + " mais caros: " + resultado.size() + " livros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getTopLivrosMaisCaros: " + e.getMessage());
+            System.err.println("❌ Erro getTopLivrosMaisCaros: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -168,9 +192,12 @@ public class RelatorioService {
     // 5b. Top livros mais reservados
     public List<Map<String, Object>> getTopLivrosMaisReservados(int limite) {
         try {
-            return repositorioReserva.findTopLivrosMaisReservados(limite);
+            List<Map<String, Object>> resultado = repositorioReserva.findTopLivrosMaisReservados(limite);
+            System.out.println("✅ Top " + limite + " mais reservados: " + resultado.size() + " livros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getTopLivrosMaisReservados: " + e.getMessage());
+            System.err.println("❌ Erro getTopLivrosMaisReservados: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -178,9 +205,12 @@ public class RelatorioService {
     // 5c. Últimas reservas
     public List<Map<String, Object>> getUltimasReservas(int limite) {
         try {
-            return repositorioReserva.findUltimasReservas(limite);
+            List<Map<String, Object>> resultado = repositorioReserva.findUltimasReservas(limite);
+            System.out.println("✅ Últimas " + limite + " reservas: " + resultado.size() + " registros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getUltimasReservas: " + e.getMessage());
+            System.err.println("❌ Erro getUltimasReservas: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -188,9 +218,12 @@ public class RelatorioService {
     // Reservas por status
     public List<Map<String, Object>> getReservasPorStatus() {
         try {
-            return repositorioReserva.findReservasPorStatus();
+            List<Map<String, Object>> resultado = repositorioReserva.findReservasPorStatus();
+            System.out.println("✅ Reservas por status: " + resultado.size() + " status");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getReservasPorStatus: " + e.getMessage());
+            System.err.println("❌ Erro getReservasPorStatus: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -198,9 +231,12 @@ public class RelatorioService {
     // Reservas por período
     public List<Map<String, Object>> getReservasPorPeriodo(String dataInicio, String dataFim) {
         try {
-            return repositorioReserva.findReservasPorPeriodo(dataInicio, dataFim);
+            List<Map<String, Object>> resultado = repositorioReserva.findReservasPorPeriodo(dataInicio, dataFim);
+            System.out.println("✅ Reservas entre " + dataInicio + " e " + dataFim + ": " + resultado.size() + " registros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getReservasPorPeriodo: " + e.getMessage());
+            System.err.println("❌ Erro getReservasPorPeriodo: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -208,9 +244,12 @@ public class RelatorioService {
     // Top usuários mais ativos
     public List<Map<String, Object>> getTopUsuariosMaisAtivos(int limite) {
         try {
-            return repositorioUsuario.findTopUsuariosMaisAtivos(limite);
+            List<Map<String, Object>> resultado = repositorioUsuario.findTopUsuariosMaisAtivos(limite);
+            System.out.println("✅ Top " + limite + " usuários ativos: " + resultado.size() + " usuários");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getTopUsuariosMaisAtivos: " + e.getMessage());
+            System.err.println("❌ Erro getTopUsuariosMaisAtivos: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -218,9 +257,12 @@ public class RelatorioService {
     // Livros disponíveis para reserva
     public List<Map<String, Object>> getLivrosDisponiveisParaReserva() {
         try {
-            return repositorioLivro.findLivrosDisponiveisParaReserva();
+            List<Map<String, Object>> resultado = repositorioLivro.findLivrosDisponiveisParaReserva();
+            System.out.println("✅ Livros disponíveis: " + resultado.size() + " livros");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getLivrosDisponiveisParaReserva: " + e.getMessage());
+            System.err.println("❌ Erro getLivrosDisponiveisParaReserva: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -228,9 +270,12 @@ public class RelatorioService {
     // Livros por faixa de preço
     public List<Map<String, Object>> getLivrosPorFaixaPreco() {
         try {
-            return repositorioLivro.findLivrosPorFaixaPreco();
+            List<Map<String, Object>> resultado = repositorioLivro.findLivrosPorFaixaPreco();
+            System.out.println("✅ Distribuição por faixa de preço: " + resultado.size() + " faixas");
+            return resultado;
         } catch (Exception e) {
-            System.err.println("Erro getLivrosPorFaixaPreco: " + e.getMessage());
+            System.err.println("❌ Erro getLivrosPorFaixaPreco: " + e.getMessage());
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }

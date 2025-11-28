@@ -40,7 +40,7 @@ public interface RepositorioLivro extends JpaRepository<Livro, Integer> {
             nativeQuery = true)
     List<Map<String, Object>> findLivrosMaisReservadosQueMedia();
 
-    // 3. AGREGADAS - Estatísticas de livros por autor
+    // 3. AGREGADAS - Estatísticas de livros por autor (AJUSTADO - mínimo 2 livros)
     @Query(value = "SELECT " +
             "l.autor AS autor, " +
             "COUNT(*) AS total_livros, " +
@@ -51,12 +51,12 @@ public interface RepositorioLivro extends JpaRepository<Livro, Integer> {
             "SUM(l.quantidade_disponivel) AS disponivel_total " +
             "FROM livros l " +
             "GROUP BY l.autor " +
-            "HAVING COUNT(*) >= 1 " +
+            "HAVING COUNT(*) >= 2 " +
             "ORDER BY total_livros DESC",
             nativeQuery = true)
     List<Map<String, Object>> findEstatisticasLivrosPorAutor();
 
-    // 3b. AGREGADAS - Livros com baixo estoque
+    // 3b. AGREGADAS - Livros com baixo estoque (MANTIDO)
     @Query(value = "SELECT " +
             "l.id AS id, " +
             "l.titulo AS titulo, " +
@@ -125,22 +125,24 @@ public interface RepositorioLivro extends JpaRepository<Livro, Integer> {
             nativeQuery = true)
     List<Map<String, Object>> findLivrosDisponiveisParaReserva();
 
-    // Análise por faixa de preço com CASE WHEN
+    // Análise por faixa de preço com CASE WHEN (AJUSTADO para preços simbólicos R$ 3-15)
     @Query(value = "SELECT " +
             "CASE " +
-            "    WHEN l.preco < 30 THEN 'Econômico (< R$ 30)' " +
-            "    WHEN l.preco >= 30 AND l.preco < 50 THEN 'Médio (R$ 30-50)' " +
-            "    WHEN l.preco >= 50 AND l.preco < 70 THEN 'Premium (R$ 50-70)' " +
-            "    ELSE 'Luxo (> R$ 70)' " +
+            "    WHEN l.preco < 5 THEN 'Econômico (< R$ 5)' " +
+            "    WHEN l.preco >= 5 AND l.preco < 8 THEN 'Médio (R$ 5-8)' " +
+            "    WHEN l.preco >= 8 AND l.preco < 10 THEN 'Premium (R$ 8-10)' " +
+            "    ELSE 'Especial (> R$ 10)' " +
             "END AS faixa_preco, " +
             "COUNT(*) AS total_livros, " +
-            "ROUND(AVG(l.preco), 2) AS preco_medio " +
+            "ROUND(AVG(l.preco), 2) AS preco_medio, " +
+            "ROUND(MIN(l.preco), 2) AS preco_minimo, " +
+            "ROUND(MAX(l.preco), 2) AS preco_maximo " +
             "FROM livros l " +
             "GROUP BY CASE " +
-            "    WHEN l.preco < 30 THEN 'Econômico (< R$ 30)' " +
-            "    WHEN l.preco >= 30 AND l.preco < 50 THEN 'Médio (R$ 30-50)' " +
-            "    WHEN l.preco >= 50 AND l.preco < 70 THEN 'Premium (R$ 50-70)' " +
-            "    ELSE 'Luxo (> R$ 70)' " +
+            "    WHEN l.preco < 5 THEN 'Econômico (< R$ 5)' " +
+            "    WHEN l.preco >= 5 AND l.preco < 8 THEN 'Médio (R$ 5-8)' " +
+            "    WHEN l.preco >= 8 AND l.preco < 10 THEN 'Premium (R$ 8-10)' " +
+            "    ELSE 'Especial (> R$ 10)' " +
             "END " +
             "ORDER BY preco_medio",
             nativeQuery = true)

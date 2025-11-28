@@ -7,6 +7,7 @@
 /home/pedrofinochio/Library/src/main/java/com/mcnz/spring/app/controller/LivroController.java
 /home/pedrofinochio/Library/src/main/java/com/mcnz/spring/app/controller/LivroWebController.java
 /home/pedrofinochio/Library/src/main/java/com/mcnz/spring/app/controller/RelatorioController.java
+/home/pedrofinochio/Library/src/main/java/com/mcnz/spring/app/controller/TestQueriesController.java
 /home/pedrofinochio/Library/src/main/java/com/mcnz/spring/app/controller/UserController.java
 /home/pedrofinochio/Library/src/main/java/com/mcnz/spring/app/model/Favorito.java
 /home/pedrofinochio/Library/src/main/java/com/mcnz/spring/app/model/Livro.java

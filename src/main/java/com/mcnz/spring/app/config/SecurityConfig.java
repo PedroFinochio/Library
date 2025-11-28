@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/admin-tools/**"  // Ferramentas de admin (REMOVER EM PRODUÇÃO!)
+                                "/admin-tools/**",
+                                "/api/test-queries/**"  // ← ENDPOINT DE TESTE (REMOVER EM PRODUÇÃO!)
                         ).permitAll()
                         // Rotas exclusivas para ADMIN
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "BIBLIOTECARIO")
@@ -67,7 +68,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/livros/**", "/admin-tools/**")
+                        .ignoringRequestMatchers("/livros/**", "/admin-tools/**", "/api/**")
                 )
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/acesso-negado")
