@@ -52,7 +52,7 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .login-image .book-icon {
+        .book-icon {
             font-size: 5em;
             margin-bottom: 20px;
             animation: float 3s ease-in-out infinite;
@@ -204,27 +204,6 @@
             text-decoration: underline;
         }
 
-        /* Credenciais de teste */
-        .test-credentials {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 0.85em;
-        }
-
-        .test-credentials h4 {
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 1em;
-        }
-
-        .test-credentials p {
-            margin: 5px 0;
-            color: #666;
-        }
-
         @media (max-width: 768px) {
             .login-container {
                 grid-template-columns: 1fr;
@@ -238,7 +217,7 @@
                 font-size: 2em;
             }
 
-            .login-image .book-icon {
+            .book-icon {
                 font-size: 4em;
             }
 
@@ -260,20 +239,18 @@
         <h2>Bem-vindo</h2>
         <p class="subtitle">Entre com suas credenciais</p>
 
-        <!-- Mensagens de alerta -->
         <div th:if="${param.error}" class="alert alert-danger">
-            ❌ Usuário ou senha inválidos!
+            Usuário ou senha inválidos!
         </div>
 
         <div th:if="${param.logout}" class="alert alert-success">
-            ✅ Logout realizado com sucesso!
+            Logout realizado com sucesso!
         </div>
 
         <div th:if="${param.registro}" class="alert alert-success">
-            ✅ Cadastro realizado! Faça login para continuar.
+            Cadastro realizado! Faça login para continuar.
         </div>
 
-        <!-- Formulário de login CORRIGIDO -->
         <form th:action="@{/login}" method="post">
             <div class="form-group">
                 <label for="username">Usuário</label>
@@ -293,14 +270,6 @@
 
             <button type="submit" class="btn-login">Entrar</button>
         </form>
-
-        <!-- Credenciais de teste para facilitar -->
-        <div class="test-credentials">
-            <h4>Credenciais de Teste:</h4>
-            <p><strong>Admin:</strong> admin / senha123</p>
-            <p><strong>Bibliotecário:</strong> maria.biblio / senha123</p>
-            <p><strong>Usuário:</strong> ana.silva / senha123</p>
-        </div>
 
         <div class="register-link">
             Não tem uma conta? <a th:href="@{/registro}">Cadastre-se agora</a>

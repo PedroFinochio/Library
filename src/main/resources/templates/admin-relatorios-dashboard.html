@@ -79,13 +79,6 @@
             align-items: center;
             gap: 10px;
         }
-        .section-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.6em;
-        }
         .reports-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -111,39 +104,24 @@
         .report-icon { font-size: 2em; margin-bottom: 10px; }
         .report-title { font-size: 1.1em; font-weight: 600; color: #333; margin-bottom: 8px; }
         .report-desc { color: #666; font-size: 0.85em; line-height: 1.4; }
-        .report-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 0.7em;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-        .badge-join { background: #d4edda; color: #155724; }
-        .badge-subquery { background: #fff3cd; color: #856404; }
-        .badge-aggregate { background: #cfe2ff; color: #084298; }
-        .badge-string { background: #f8d7da; color: #721c24; }
-        .badge-order { background: #e2e3e5; color: #383d41; }
     </style>
 </head>
 <body>
 <nav class="navbar">
     <div class="navbar-content">
         <a th:href="@{/home}" class="navbar-brand">
-            <span>📊</span>
             <span>Dashboard de Relatórios</span>
         </a>
-        <a th:href="@{/home}" class="btn">🏠 Home</a>
+        <a th:href="@{/home}" class="btn">Home</a>
     </div>
 </nav>
 
 <div class="container">
     <div class="page-header">
-        <h1>📈 Sistema de Relatórios</h1>
-        <p>Consultas SQL complexas para análise de dados</p>
+        <h1>Sistema de Relatórios</h1>
+        <p>Consultas e análises de dados da biblioteca</p>
     </div>
 
-    <!-- Estatísticas Gerais -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon">📚</div>
@@ -171,132 +149,98 @@
             <div class="stat-label">Aprovadas</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">📗</div>
+            <div class="stat-icon">🔓</div>
             <div class="stat-value" th:text="${estatisticas.livrosDisponiveis} ?: 0">0</div>
             <div class="stat-label">Disponíveis</div>
         </div>
     </div>
 
-    <!-- 1. JUNÇÕES MÚLTIPLAS -->
-    <h2 class="section-title">
-        🔗 1. Junções Múltiplas (JOINs)
-        <span class="section-badge">3 Tabelas</span>
-    </h2>
+    <h2 class="section-title">Junções Múltiplas</h2>
     <div class="reports-grid">
         <a th:href="@{/admin/relatorios/reservas-completo}" class="report-card">
             <div class="report-icon">📊</div>
             <div class="report-title">Relatório Completo de Reservas</div>
-            <div class="report-desc">JOIN entre Reservas, Usuários e Livros</div>
-            <span class="report-badge badge-join">JOIN 3 TABELAS</span>
+            <div class="report-desc">Consulta integrando reservas, usuários e livros</div>
         </a>
     </div>
 
-    <!-- 2. SUBCONSULTAS -->
-    <h2 class="section-title">
-        🔍 2. Subconsultas
-        <span class="section-badge">Subqueries</span>
-    </h2>
+    <h2 class="section-title">Subconsultas</h2>
     <div class="reports-grid">
         <a th:href="@{/admin/relatorios/livros-acima-media}" class="report-card">
             <div class="report-icon">📈</div>
             <div class="report-title">Livros Acima da Média</div>
             <div class="report-desc">Livros com mais reservas que a média</div>
-            <span class="report-badge badge-subquery">SUBQUERY + AVG</span>
         </a>
         <a th:href="@{/admin/relatorios/usuarios-sem-reservas}" class="report-card">
             <div class="report-icon">👤</div>
             <div class="report-title">Usuários Sem Reservas</div>
             <div class="report-desc">Usuários que nunca fizeram reservas</div>
-            <span class="report-badge badge-subquery">NOT IN</span>
         </a>
     </div>
 
-    <!-- 3. AGREGADAS -->
-    <h2 class="section-title">
-        📊 3. Consultas Agregadas
-        <span class="section-badge">GROUP BY, HAVING</span>
-    </h2>
+    <h2 class="section-title">Consultas Agregadas</h2>
     <div class="reports-grid">
         <a th:href="@{/admin/relatorios/estatisticas-usuarios}" class="report-card">
             <div class="report-icon">👥</div>
             <div class="report-title">Estatísticas por Usuário</div>
             <div class="report-desc">Reservas por usuário com contagem</div>
-            <span class="report-badge badge-aggregate">GROUP BY + COUNT</span>
         </a>
         <a th:href="@{/admin/relatorios/estatisticas-autores}" class="report-card">
             <div class="report-icon">✍️</div>
             <div class="report-title">Análise por Autor</div>
             <div class="report-desc">Estatísticas de livros por autor</div>
-            <span class="report-badge badge-aggregate">AVG + COUNT</span>
         </a>
         <a th:href="@{/admin/relatorios/livros-baixo-estoque}" class="report-card">
             <div class="report-icon">⚠️</div>
             <div class="report-title">Livros Baixo Estoque</div>
             <div class="report-desc">Livros com estoque crítico</div>
-            <span class="report-badge badge-aggregate">WHERE + FILTER</span>
         </a>
         <a th:href="@{/admin/relatorios/reservas-por-status}" class="report-card">
             <div class="report-icon">📋</div>
             <div class="report-title">Reservas por Status</div>
             <div class="report-desc">Distribuição por status</div>
-            <span class="report-badge badge-aggregate">GROUP BY</span>
         </a>
     </div>
 
-    <!-- 4. COMPARAÇÃO DE STRINGS -->
-    <h2 class="section-title">
-        🔤 4. Comparação de Strings
-        <span class="section-badge">LIKE, ANY</span>
-    </h2>
+    <h2 class="section-title">Comparação de Strings</h2>
     <div class="reports-grid">
         <a th:href="@{/admin/relatorios/busca-avancada}" class="report-card">
             <div class="report-icon">🔍</div>
             <div class="report-title">Busca Avançada</div>
-            <div class="report-desc">Busca com LIKE em múltiplos campos</div>
-            <span class="report-badge badge-string">LIKE + OR</span>
+            <div class="report-desc">Busca em múltiplos campos</div>
         </a>
         <a th:href="@{/admin/relatorios/livros-caros-autor}" class="report-card">
             <div class="report-icon">💰</div>
             <div class="report-title">Comparação de Preços</div>
             <div class="report-desc">Livros mais caros que autor</div>
-            <span class="report-badge badge-string">SUBQUERY</span>
         </a>
     </div>
 
-    <!-- 5. ORDENAÇÃO E LIMITAÇÃO -->
-    <h2 class="section-title">
-        🎯 5. Ordenação e Limitação
-        <span class="section-badge">ORDER BY, LIMIT</span>
-    </h2>
+    <h2 class="section-title">Ordenação e Limitação</h2>
     <div class="reports-grid">
         <a th:href="@{/admin/relatorios/top-livros-caros}" class="report-card">
             <div class="report-icon">💎</div>
             <div class="report-title">Top Livros Mais Caros</div>
             <div class="report-desc">Ranking por preço</div>
-            <span class="report-badge badge-order">ORDER BY + LIMIT</span>
         </a>
         <a th:href="@{/admin/relatorios/top-livros-reservados}" class="report-card">
             <div class="report-icon">🏆</div>
             <div class="report-title">Top Livros Reservados</div>
             <div class="report-desc">Livros mais populares</div>
-            <span class="report-badge badge-order">ORDER BY + LIMIT</span>
         </a>
         <a th:href="@{/admin/relatorios/ultimas-reservas}" class="report-card">
             <div class="report-icon">🕐</div>
             <div class="report-title">Últimas Reservas</div>
             <div class="report-desc">Reservas mais recentes</div>
-            <span class="report-badge badge-order">ORDER BY DESC</span>
         </a>
         <a th:href="@{/admin/relatorios/top-usuarios-ativos}" class="report-card">
             <div class="report-icon">⭐</div>
             <div class="report-title">Top Usuários Ativos</div>
             <div class="report-desc">Usuários com mais reservas</div>
-            <span class="report-badge badge-order">ORDER BY + LIMIT</span>
         </a>
     </div>
 
-    <!-- RELATÓRIOS EXTRAS -->
-    <h2 class="section-title">📑 Relatórios Adicionais</h2>
+    <h2 class="section-title">Relatórios Adicionais</h2>
     <div class="reports-grid">
         <a th:href="@{/admin/relatorios/livros-disponiveis}" class="report-card">
             <div class="report-icon">✅</div>
@@ -306,12 +250,12 @@
         <a th:href="@{/admin/relatorios/livros-faixa-preco}" class="report-card">
             <div class="report-icon">💵</div>
             <div class="report-title">Faixa de Preço</div>
-            <div class="report-desc">Distribuição com CASE WHEN</div>
+            <div class="report-desc">Distribuição por faixa de preço</div>
         </a>
         <a th:href="@{/admin/relatorios/reservas-periodo}" class="report-card">
             <div class="report-icon">📅</div>
             <div class="report-title">Reservas por Período</div>
-            <div class="report-desc">Filtro por data com BETWEEN</div>
+            <div class="report-desc">Filtro por data</div>
         </a>
     </div>
 </div>
