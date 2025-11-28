@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.mcnz.spring.app.CrudRestJpaDemoApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.845 s -- in com.mcnz.spring.app.CrudRestJpaDemoApplicationTests

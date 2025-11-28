@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Relatório</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            background: white;
+            color: #667eea;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .header-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .header-section h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .header-section p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .sql-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-state-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .status-pendente { background: #fff3cd; color: #856404; }
+        .status-aprovada { background: #d4edda; color: #155724; }
+        .status-rejeitada { background: #f8d7da; color: #721c24; }
+        .status-devolvida { background: #d1ecf1; color: #0c5460; }
+        .status-cancelada { background: #e9ecef; color: #6c757d; }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn-action {
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-print {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn-export {
+            background: #28a745;
+            color: white;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        @media print {
+            .navbar, .actions { display: none; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-content">
+        <a th:href="@{/home}" class="navbar-brand">
+            <span>📊</span>
+            <span>Relatórios</span>
+        </a>
+        <a th:href="@{/admin/relatorios}" class="btn">← Voltar ao Dashboard</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="header-section">
+        <h1 th:text="${titulo}">Título do Relatório</h1>
+        <p th:text="${descricao}">Descrição da consulta SQL utilizada</p>
+        <span class="sql-badge">🔍 Consulta SQL Complexa</span>
+    </div>
+
+    <div class="table-container">
+        <div th:if="${#lists.isEmpty(dados)}" class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h2>Nenhum dado encontrado</h2>
+            <p>Não há registros para exibir neste relatório</p>
+        </div>
+
+        <table th:unless="${#lists.isEmpty(dados)}">
+            <thead>
+            <tr>
+                <th th:each="coluna : ${dados[0].keySet()}"
+                    th:text="${#strings.capitalize(#strings.replace(coluna, '_', ' '))}">
+                    Coluna
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="linha : ${dados}">
+                <td th:each="coluna : ${linha.keySet()}">
+                    <!-- Status com badge colorido -->
+                    <span th:if="${coluna == 'status'}"
+                          th:class="${'status-badge status-' + #strings.toLowerCase(linha[coluna])}"
+                          th:text="${linha[coluna]}">
+                        </span>
+                    <!-- Valores monetários -->
+                    <span th:if="${coluna == 'preco' or coluna == 'preco_medio' or coluna == 'preco_minimo' or coluna == 'preco_maximo'}"
+                          th:text="${'R$ ' + #numbers.formatDecimal(linha[coluna], 1, 2)}">
+                        </span>
+                    <!-- Datas -->
+                    <span th:if="${coluna == 'data_reserva' or coluna == 'devolucao_prevista'}"
+                          th:text="${linha[coluna] != null ? #temporals.format(linha[coluna], 'dd/MM/yyyy HH:mm') : '-'}">
+                        </span>
+                    <!-- Outros valores -->
+                    <span th:unless="${coluna == 'status' or coluna == 'preco' or coluna == 'preco_medio' or coluna == 'preco_minimo' or coluna == 'preco_maximo' or coluna == 'data_reserva' or coluna == 'devolucao_prevista'}"
+                          th:text="${linha[coluna] != null ? linha[coluna] : '-'}">
+                        </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="actions" th:unless="${#lists.isEmpty(dados)}">
+            <a th:href="@{/admin/relatorios}" class="btn-action btn-back">← Voltar ao Dashboard</a>
+            <button onclick="window.print()" class="btn-action btn-print">🖨️ Imprimir</button>
+            <button onclick="exportarCSV()" class="btn-action btn-export">📥 Exportar CSV</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function exportarCSV() {
+        const dados = /*[[${dados}]]*/ [];
+        if (dados.length === 0) return;
+
+        // Cabeçalhos
+        const headers = Object.keys(dados[0]);
+        let csv = headers.join(',') + '\n';
+
+        // Dados
+        dados.forEach(linha => {
+            const valores = headers.map(h => {
+                let valor = linha[h];
+                if (valor === null || valor === undefined) return '';
+                // Escapar vírgulas e aspas
+                valor = String(valor).replace(/"/g, '""');
+                return '"' + valor + '"';
+            });
+            csv += valores.join(',') + '\n';
+        });
+
+        // Download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'relatorio_' + new Date().getTime() + '.csv';
+        link.click();
+    }
+</script>
+</body>
+</html>
