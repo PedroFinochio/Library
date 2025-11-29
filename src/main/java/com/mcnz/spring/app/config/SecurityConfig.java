@@ -41,7 +41,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/admin-tools/**",
-                                "/api/test-queries/**"  // ← ENDPOINT DE TESTE (REMOVER EM PRODUÇÃO!)
+                                "/api/test-queries/**"
                         ).permitAll()
                         // Rotas exclusivas para ADMIN
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "BIBLIOTECARIO")
