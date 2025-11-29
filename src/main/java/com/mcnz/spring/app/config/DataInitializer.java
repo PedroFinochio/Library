@@ -106,113 +106,112 @@ public class DataInitializer implements CommandLineRunner {
     private void inicializarLivros() {
         System.out.println("📚 Criando livros...");
 
-        // Array com dados dos livros: título, autor, preço, qtdTotal, qtdDisponível
+        // Array com dados dos livros: título, autor, preço, qtdTotal, qtdDisponível, imagemUrl
         Object[][] livrosData = {
                 // ========== MACHADO DE ASSIS ==========
-                {"Dom Casmurro", "Machado de Assis", 5.00, 5, 4},
-                {"Memórias Póstumas de Brás Cubas", "Machado de Assis", 5.00, 4, 3},
-                {"Quincas Borba", "Machado de Assis", 5.00, 3, 2},
-                {"Esaú e Jacó", "Machado de Assis", 4.50, 2, 1},
-                {"O Alienista", "Machado de Assis", 3.00, 4, 0},
+                {"Dom Casmurro", "Machado de Assis", 5.00, 5, 4, "/images/dom_casmurro.jpg"},
+                {"Memórias Póstumas de Brás Cubas", "Machado de Assis", 5.00, 4, 3, "/images/memorias_postumas.jpg"},
+                {"Quincas Borba", "Machado de Assis", 5.00, 3, 2, "/images/quincas_borba.jpg"},
+                {"Esaú e Jacó", "Machado de Assis", 4.50, 2, 1, "/images/esau_e_jaco.jpg"},
+                {"O Alienista", "Machado de Assis", 3.00, 4, 0, "/images/o_alienista.jpg"},
 
                 // ========== GEORGE ORWELL ==========
-                {"1984", "George Orwell", 6.00, 6, 5},
-                {"A Revolução dos Bichos", "George Orwell", 4.00, 3, 2},
-                {"Na Pior em Paris e Londres", "George Orwell", 5.50, 2, 1},
+                {"1984", "George Orwell", 6.00, 6, 5, "/images/1984.jpg"},
+                {"A Revolução dos Bichos", "George Orwell", 4.00, 3, 2, "/images/revolucao_bichos.jpg"},
+                {"Na Pior em Paris e Londres", "George Orwell", 5.50, 2, 1, "/images/na_pior.jpg"},
 
                 // ========== J.K. ROWLING ==========
-                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 8.00, 8, 7},
-                {"Harry Potter e a Câmara Secreta", "J.K. Rowling", 8.00, 6, 4},
-                {"Harry Potter e o Prisioneiro de Azkaban", "J.K. Rowling", 8.00, 5, 3},
-                {"Harry Potter e o Cálice de Fogo", "J.K. Rowling", 9.00, 4, 2},
-                {"Harry Potter e a Ordem da Fênix", "J.K. Rowling", 9.00, 3, 1},
+                {"Harry Potter e a Pedra Filosofal", "J.K. Rowling", 8.00, 8, 7, "/images/pedra_filosofal.jpg"},
+                {"Harry Potter e a Câmara Secreta", "J.K. Rowling", 8.00, 6, 4, "/images/camara_secreta.jpg"},
+                {"Harry Potter e o Prisioneiro de Azkaban", "J.K. Rowling", 8.00, 5, 3, "/images/prisioneiro_askabam.jpg"},
+                {"Harry Potter e o Cálice de Fogo", "J.K. Rowling", 9.00, 4, 2, "/images/calice_de_fogo.jpg"},
+                {"Harry Potter e a Ordem da Fênix", "J.K. Rowling", 9.00, 3, 1, "/images/ordem_da_fenix.jpg"},
 
                 // ========== DAN BROWN ==========
-                {"O Código Da Vinci", "Dan Brown", 7.00, 5, 4},
-                {"Anjos e Demônios", "Dan Brown", 7.00, 4, 3},
-                {"O Símbolo Perdido", "Dan Brown", 7.00, 3, 2},
-                {"Inferno", "Dan Brown", 7.50, 2, 1},
+                {"O Código Da Vinci", "Dan Brown", 7.00, 5, 4, "/images/codigo_da_vinci.jpg"},
+                {"Anjos e Demônios", "Dan Brown", 7.00, 4, 3, "/images/anjos_e_demonios.jpg"},
+                {"O Símbolo Perdido", "Dan Brown", 7.00, 3, 2, "/images/simbolo_perdido.jpg"},
+                {"Inferno", "Dan Brown", 7.50, 2, 1, "/images/inferno.jpg"},
 
                 // ========== YUVAL NOAH HARARI ==========
-                {"Sapiens", "Yuval Noah Harari", 10.00, 4, 3},
-                {"Homo Deus", "Yuval Noah Harari", 10.00, 3, 2},
-                {"21 Lições para o Século 21", "Yuval Noah Harari", 10.00, 2, 1},
+                {"Sapiens", "Yuval Noah Harari", 10.00, 4, 3, "/images/sapiens.jpg"},
+                {"Homo Deus", "Yuval Noah Harari", 10.00, 3, 2, "/images/homo_Deus.jpg"},
+                {"21 Lições para o Século 21", "Yuval Noah Harari", 10.00, 2, 1, "/images/licoes.jpg"},
 
                 // ========== JANE AUSTEN ==========
-                {"Orgulho e Preconceito", "Jane Austen", 5.00, 4, 3},
-                {"Emma", "Jane Austen", 5.00, 3, 2},
-                {"Razão e Sensibilidade", "Jane Austen", 5.00, 2, 1},
-                {"Persuasão", "Jane Austen", 4.50, 2, 0},
+                {"Orgulho e Preconceito", "Jane Austen", 5.00, 4, 3, "/images/orgulho_e_preconceito.jpg"},
+                {"Emma", "Jane Austen", 5.00, 3, 2, "/images/emma.jpg"},
+                {"Razão e Sensibilidade", "Jane Austen", 5.00, 2, 1, "/images/razao_e_sensibilidade.jpg"},
+                {"Persuasão", "Jane Austen", 4.50, 2, 0, "/images/persuasao.jpg"},
 
                 // ========== J.R.R. TOLKIEN ==========
-                {"O Hobbit", "J.R.R. Tolkien", 8.00, 5, 4},
-                {"O Senhor dos Anéis: A Sociedade do Anel", "J.R.R. Tolkien", 10.00, 4, 3},
-                {"O Senhor dos Anéis: As Duas Torres", "J.R.R. Tolkien", 10.00, 3, 2},
-                {"O Senhor dos Anéis: O Retorno do Rei", "J.R.R. Tolkien", 10.00, 3, 2},
-                {"O Silmarillion", "J.R.R. Tolkien", 9.00, 2, 1},
+                {"O Hobbit", "J.R.R. Tolkien", 8.00, 5, 4, "/images/hobbit.jpg"},
+                {"O Senhor dos Anéis: A Sociedade do Anel", "J.R.R. Tolkien", 10.00, 4, 3, "/images/sociedade_anel.jpg"},
+                {"O Senhor dos Anéis: As Duas Torres", "J.R.R. Tolkien", 10.00, 3, 2, "/images/torres.jpg"},
+                {"O Senhor dos Anéis: O Retorno do Rei", "J.R.R. Tolkien", 10.00, 3, 2, "/images/retorno_rei.jpg"},
+                {"O Silmarillion", "J.R.R. Tolkien", 9.00, 2, 1, "/images/silmarillion.jpg"},
 
                 // ========== GUIMARÃES ROSA ==========
-                {"Grande Sertão: Veredas", "Guimarães Rosa", 8.00, 3, 2},
-                {"Sagarana", "Guimarães Rosa", 6.00, 2, 1},
+                {"Grande Sertão: Veredas", "Guimarães Rosa", 8.00, 3, 2, "/images/grande_sertao_veredas.jpg"},
+                {"Sagarana", "Guimarães Rosa", 6.00, 2, 1, "/images/sagarana.jpg"},
 
                 // ========== JORGE AMADO ==========
-                {"Capitães da Areia", "Jorge Amado", 5.50, 4, 2},
-                {"Gabriela, Cravo e Canela", "Jorge Amado", 6.00, 3, 2},
-                {"Dona Flor e Seus Dois Maridos", "Jorge Amado", 6.00, 2, 1},
+                {"Capitães da Areia", "Jorge Amado", 5.50, 4, 2, "/images/capitaes_da_areia.jpg"},
+                {"Gabriela, Cravo e Canela", "Jorge Amado", 6.00, 3, 2, "/images/gabriela.jpg"},
+                {"Dona Flor e Seus Dois Maridos", "Jorge Amado", 6.00, 2, 1, "/images/dona_flor.jpg"},
 
                 // ========== PATRICK ROTHFUSS ==========
-                {"O Nome do Vento", "Patrick Rothfuss", 9.00, 3, 2},
-                {"O Temor do Sábio", "Patrick Rothfuss", 9.00, 2, 1},
+                {"O Nome do Vento", "Patrick Rothfuss", 9.00, 3, 2, "/images/nome_do_vento.jpg"},
+                {"O Temor do Sábio", "Patrick Rothfuss", 9.00, 2, 1, "/images/temor_do_sabio.jpg"},
 
                 // ========== CHARLES DUHIGG ==========
-                {"O Poder do Hábito", "Charles Duhigg", 7.50, 3, 2},
+                {"O Poder do Hábito", "Charles Duhigg", 7.50, 3, 2, "/images/poder_do_habito.jpg"},
 
                 // ========== ROBERT C. MARTIN ==========
-                {"Código Limpo", "Robert C. Martin", 12.00, 3, 2},
-                {"Arquitetura Limpa", "Robert C. Martin", 12.00, 2, 1},
+                {"Código Limpo", "Robert C. Martin", 12.00, 3, 2, "/images/codigo_limpo.jpg"},
+                {"Arquitetura Limpa", "Robert C. Martin", 12.00, 2, 1, "/images/arquitetura_limpa.jpg"},
 
                 // ========== RAY BRADBURY ==========
-                {"Fahrenheit 451", "Ray Bradbury", 6.00, 2, 1},
-                {"Crônicas Marcianas", "Ray Bradbury", 6.50, 2, 1},
+                {"Fahrenheit 451", "Ray Bradbury", 6.00, 2, 1, "/images/fahrenheit_451.jpg"},
+                {"Crônicas Marcianas", "Ray Bradbury", 6.50, 2, 1, "/images/cronicas_marcianas.jpg"},
 
                 // ========== WILLIAM GIBSON ==========
-                {"Neuromancer", "William Gibson", 8.00, 2, 1},
+                {"Neuromancer", "William Gibson", 8.00, 2, 1, "/images/neuromancer.jpg"},
 
                 // ========== EMILY BRONTË ==========
-                {"O Morro dos Ventos Uivantes", "Emily Brontë", 5.50, 2, 1},
+                {"O Morro dos Ventos Uivantes", "Emily Brontë", 5.50, 2, 1, "/images/morro_dos_ventos.jpg"},
 
                 // ========== FRANZ KAFKA ==========
-                {"A Metamorfose", "Franz Kafka", 4.00, 3, 2},
-                {"O Processo", "Franz Kafka", 5.00, 2, 1},
-                {"O Castelo", "Franz Kafka", 5.50, 2, 0},
+                {"A Metamorfose", "Franz Kafka", 4.00, 3, 2, "/images/metamorfose.jpg"},
+                {"O Processo", "Franz Kafka", 5.00, 2, 1, "/images/processo.jpg"},
+                {"O Castelo", "Franz Kafka", 5.50, 2, 0, "/images/castelo.jpg"},
 
                 // ========== FIÓDOR DOSTOIÉVSKI ==========
-                {"Crime e Castigo", "Fiódor Dostoiévski", 8.00, 3, 2},
-                {"Os Irmãos Karamázov", "Fiódor Dostoiévski", 9.00, 2, 1},
-                {"O Idiota", "Fiódor Dostoiévski", 8.00, 2, 0},
+                {"Crime e Castigo", "Fiódor Dostoiévski", 8.00, 3, 2, "/images/crime_castigo.jpg"},
+                {"Os Irmãos Karamázov", "Fiódor Dostoiévski", 9.00, 2, 1, "/images/irmaos.jpg"},
+                {"O Idiota", "Fiódor Dostoiévski", 8.00, 2, 0, "/images/idiota.jpg"},
 
                 // ========== ROBERT LOUIS STEVENSON ==========
-                {"A Ilha do Tesouro", "Robert Louis Stevenson", 5.00, 3, 0},
-                {"O Médico e o Monstro", "Robert Louis Stevenson", 4.50, 2, 1},
+                {"A Ilha do Tesouro", "Robert Louis Stevenson", 5.00, 3, 0, "/images/ilha.jpg"},
+                {"O Médico e o Monstro", "Robert Louis Stevenson", 4.50, 2, 1, "/images/medico_monstro.jpg"},
 
                 // ========== ERICH GAMMA (Gang of Four) ==========
-                {"Design Patterns", "Erich Gamma", 15.00, 2, 0},
+                {"Design Patterns", "Erich Gamma", 15.00, 2, 0, "/images/design_patterns.jpg"},
 
                 // ========== GABRIEL GARCÍA MÁRQUEZ ==========
-                {"Cem Anos de Solidão", "Gabriel García Márquez", 8.00, 3, 1},
-                {"O Amor nos Tempos do Cólera", "Gabriel García Márquez", 7.00, 2, 0},
-                {"Crônica de uma Morte Anunciada", "Gabriel García Márquez", 6.00, 2, 1},
+                {"Cem Anos de Solidão", "Gabriel García Márquez", 8.00, 3, 1, "/images/solidao.jpg"},
+                {"O Amor nos Tempos do Cólera", "Gabriel García Márquez", 7.00, 2, 0, "/images/colera.jpg"},
+                {"Crônica de uma Morte Anunciada", "Gabriel García Márquez", 6.00, 2, 1, "/images/cronica_anunciada.jpg"},
 
                 // ========== AGATHA CHRISTIE ==========
-                {"Assassinato no Expresso do Oriente", "Agatha Christie", 6.00, 3, 0},
-                {"Morte no Nilo", "Agatha Christie", 6.00, 2, 1},
-                {"O Caso dos Dez Negrinhos", "Agatha Christie", 6.50, 2, 1},
+                {"Assassinato no Expresso do Oriente", "Agatha Christie", 6.00, 3, 0, "/images/oriente.jpg"},
+                {"Morte no Nilo", "Agatha Christie", 6.00, 2, 1, "/images/nilo.jpg"},
+                {"O Caso dos Dez Negrinhos", "Agatha Christie", 6.50, 2, 1, "/images/dez.jpg"},
 
                 // ========== OUTROS CLÁSSICOS ==========
-                {"O Pequeno Príncipe", "Antoine de Saint-Exupéry", 4.00, 5, 4},
-                {"1984", "George Orwell", 6.00, 4, 3},
-                {"Admirável Mundo Novo", "Aldous Huxley", 6.50, 3, 2},
-                {"Laranja Mecânica", "Anthony Burgess", 6.00, 2, 1}
+                {"O Pequeno Príncipe", "Antoine de Saint-Exupéry", 4.00, 5, 4, "/images/pequeno.jpg"},
+                {"Admirável Mundo Novo", "Aldous Huxley", 6.50, 3, 2, "/images/admiravel.jpg"},
+                {"Laranja Mecânica", "Anthony Burgess", 6.00, 2, 1, "/images/laranja.jpg"}
         };
 
         for (Object[] dados : livrosData) {
@@ -223,11 +222,13 @@ public class DataInitializer implements CommandLineRunner {
             livro.setQuantidade((Integer) dados[3]);
             livro.setQuantidadeDisponivel((Integer) dados[4]);
             livro.setDisponivel((Integer) dados[4] > 0);
+            livro.setImageUrl((String) dados[5]);
 
             repositorioLivro.save(livro);
         }
 
         System.out.println("   ✅ " + repositorioLivro.count() + " livros criados");
+        System.out.println("   📁 Imagens devem estar em: src/main/resources/static/images/");
     }
 
     private void inicializarReservas() {
@@ -306,8 +307,8 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("   📋 Reservas: " + repositorioReserva.count());
         System.out.println("   ⏳ Pendentes: " + repositorioReserva.countPendentes());
         System.out.println("   ✅ Aprovadas: " + repositorioReserva.countAprovadas());
-        System.out.println("   🔓 Disponíveis: " + repositorioLivro.countDisponiveis());
-        System.out.println("   🔕 Indisponíveis: " + repositorioLivro.countIndisponiveis());
+        System.out.println("   📗 Disponíveis: " + repositorioLivro.countDisponiveis());
+        System.out.println("   📕 Indisponíveis: " + repositorioLivro.countIndisponiveis());
         System.out.println();
     }
 }
